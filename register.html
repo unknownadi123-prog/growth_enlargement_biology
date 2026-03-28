@@ -3,32 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Labs // New Build Registration</title>
+    <title>Apex Labs // New Build Onboarding</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* FIX: Handle the very dark new image */
-        .mood-image { 
-            /* CHANGE 1: Bumped contrast to 125% and brightness to 80% so he pops */
-            filter: grayscale(100%) contrast(125%) brightness(80%);
-            
-            /* The image subject is on the left, so we DO NOT use scaleX(-1) here */
-            
-            /* CHANGE 2: Set object-position to RIGHT. Since we aren't flipping him, 
-               this forces the left side of the photo (the subject) into the frame. */
-            object-position: right center; 
-
-            width: 100%;
-            height: 100%;
+        /* Immersive, moody branding to match the reference */
+        .page-mood { 
+            /* CHANGE 1: Full-screen background image */
+            background-image: url('register-vibe.jpg'); 
+            background-size: cover;
+            background-position: top center;
+            background-attachment: fixed; /* Keeps image static on scroll */
         }
         
-        .bg-grid {
-            background-image: linear-gradient(to right, #0f172a 1px, transparent 1px), 
-                              linear-gradient(to bottom, #0f172a 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
+        /* Ensures the text is extremely clear on the dark image */
+        .text-cipher { filter: grayscale(100%) brightness(200%) contrast(150%); }
 
-        /* Subtle pulse for the "Initializing" status */
         @keyframes pulse-red {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
@@ -36,89 +26,76 @@
         .status-pulse { animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
-<body class="bg-[#020617] text-slate-200 min-h-screen flex font-mono uppercase tracking-tight bg-grid selection:bg-red-900">
+<body class="bg-black text-slate-100 min-h-screen font-mono uppercase selection:bg-red-800 page-mood">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 min-h-screen">
         
-        <div class="relative overflow-hidden hidden md:block border-r border-red-900/20">
-            <img src="register-vibe.jpg" alt="New Build" class="absolute inset-0 object-cover mood-image">
+        <div class="relative p-10 flex flex-col justify-between md:border-r md:border-red-900/20">
+            <div class="absolute inset-0 bg-gradient-to-l from-black via-transparent to-transparent opacity-90 z-10"></div>
             
-            <div class="absolute inset-0 bg-gradient-to-l from-[#020617] via-transparent to-transparent opacity-90"></div>
-            
-            <div class="absolute top-10 left-10 text-red-600 text-[10px] font-black tracking-[0.5em] status-pulse">
+            <div class="text-[10px] text-red-600 font-black tracking-[0.5em] status-pulse relative z-20">
                 STATUS: INITIALIZING_NEW_SUBJECT
             </div>
-        </div>
+            
+            </div>
 
-        <div class="flex items-center justify-center p-8 lg:p-20 relative form-scanlines">
-            <div class="w-full max-w-sm space-y-10 z-10">
+        <div class="flex items-center justify-center p-8 lg:p-20 relative bg-black/60 md:bg-black/80 backdrop-blur-md">
+            <div class="w-full max-w-sm space-y-12 z-20">
                 
-                <div class="space-y-3">
+                <div class="text-center space-y-2">
                     <h2 class="text-4xl font-black italic text-white tracking-tighter uppercase mb-1">New_Build</h2>
-                    <p class="text-[10px] text-slate-500 tracking-[0.3em] leading-relaxed">Secure registration for private biometric tracking vault</p>
-                    <div class="h-[2px] w-full bg-gradient-to-r from-red-900/50 to-transparent"></div>
+                    <p class="text-[10px] text-red-600 uppercase tracking-[0.4em] font-bold">Registration // Station_045</p>
+                    <div class="h-[1px] w-24 bg-red-800 mx-auto"></div>
                 </div>
 
                 <div class="space-y-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-red-500 tracking-[0.2em]">Assign_User_ID</label>
-                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-[#030712] border border-slate-800 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-900">
+                    <div class="space-y-1">
+                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Assign_User_ID</label>
+                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-slate-900 border border-slate-800 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Security_Cipher</label>
+                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
                     </div>
                     
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-red-500 tracking-[0.2em]">Security_Cipher</label>
-                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-[#030712] border border-slate-800 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-900">
-                    </div>
-                    
-                    <div class="pt-4 space-y-4">
-                        <button onclick="signUp()" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.4em] text-[11px] text-white hover:bg-white hover:text-black transition duration-500 transform hover:-translate-y-1 shadow-lg shadow-red-900/10">
-                            Initialize_Entry
-                        </button>
+                    <div class="flex flex-col gap-3 pt-4">
+                        <button onclick="auth('signup')" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">Initialize_Subject</button>
                         
-                        <div class="text-center">
-                            <a href="login.html" class="text-[10px] text-slate-600 hover:text-red-500 transition tracking-[0.2em] font-bold">
+                        <div class="text-center pt-2">
+                            <a href="login.html" class="text-slate-600 text-[9px] uppercase font-bold hover:text-red-500 transition tracking-widest">
                                 Existing Operator? Uplink_Access
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-6 text-center">
-                    <p id="msg" class="text-[10px] font-bold tracking-[0.2em] min-h-[20px] mb-2"></p>
-                    <p class="text-[9px] text-slate-800 tracking-tighter">PROTO_LEVEL_SECURE_CHANNEL // SYNC_ACTIVE</p>
+                <div class="pt-8 border-t border-slate-800 text-cipher text-center">
+                    <p id="msg" class="text-[10px] text-red-600 uppercase font-bold tracking-widest min-h-[20px] mb-4"></p>
+                    <p class="text-[9px] text-slate-600">AES-256-GCM SECURE CHANNEL // LYS4OQ45tU1... ACTIVE</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Specific Supabase credentials
         const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
         const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
         const supabase = supabase.createClient(SB_URL, SB_KEY);
 
-        async function signUp() {
+        async function auth(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const msgBox = document.getElementById('msg');
             
-            if(!email || !password) {
-                msgBox.className = "text-red-600";
-                msgBox.innerText = "ERROR: NULL_VALUES_DETECTED";
-                return;
-            }
-
-            msgBox.className = "text-blue-500 animate-pulse";
             msgBox.innerText = "INDEXING_BIOMETRICS...";
 
             const { data, error } = await supabase.auth.signUp({ email, password });
 
             if (error) {
-                msgBox.className = "text-red-600";
-                msgBox.innerText = "DENIED: " + error.message.toUpperCase();
+                msgBox.innerText = "ALERT: " + error.message.toUpperCase();
             } else {
-                msgBox.className = "text-green-500";
-                msgBox.innerText = "SUBJECT_CREATED. REDIRECTING...";
+                msgBox.className = "text-[10px] text-green-500 uppercase font-bold tracking-widest";
+                msgBox.innerText = "SUCCESS: SUBJECT_CREATED. REDIRECTING...";
                 setTimeout(() => { 
                     window.location.href = 'dashboard.html'; 
                 }, 2000);
