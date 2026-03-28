@@ -10,11 +10,10 @@
 
     <nav class="border-b border-slate-800 p-4 flex justify-between items-center">
         <h1 class="text-xs font-mono text-slate-500 uppercase tracking-widest">Research_Project_Alpha // Secure_Vault</h1>
-        <div class="text-xs text-green-500 font-mono">● ENCRYPTED_CONNECTION_STABLE</div>
+        <div id="sync-status" class="text-xs text-yellow-500 font-mono">● STANDBY</div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-6 space-y-8">
-        
         <section class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 shadow-xl text-center">
             <h2 class="text-xl font-bold mb-4 text-cyan-400">Anatomical Performance Map</h2>
             <div class="w-full max-w-md mx-auto">
@@ -28,11 +27,11 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Length (BPEL)</label>
-                        <input type="number" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
+                        <input type="number" id="len-in" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Girth (Mid)</label>
-                        <input type="number" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
+                        <input type="number" id="gir-in" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
                     </div>
                 </div>
             </section>
@@ -41,14 +40,19 @@
                 <h3 class="text-lg font-semibold mb-4">EQ & Stamina</h3>
                 <div class="space-y-4">
                     <label class="block text-xs text-slate-400 mb-1 text-center">Hardness Score: 1-10</label>
-                    <input type="range" min="1" max="10" class="w-full accent-cyan-500">
-                    <button class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition uppercase text-sm tracking-widest">Start Training Session</button>
+                    <input type="range" id="eq-in" min="1" max="10" class="w-full accent-cyan-500">
+                    <button onclick="logSession()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition uppercase text-sm tracking-widest">Start Training Session</button>
                 </div>
             </section>
         </div>
     </main>
 
     <script>
+        // --- 1. CLOUD CONFIG (PASTE YOUR KEYS HERE) ---
+        const SB_URL = 'PASTE_YOUR_SUPABASE_URL_HERE'; 
+        const SB_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
+
+        // --- 2. THE RADAR CHART ---
         const ctx = document.getElementById('performanceRadar').getContext('2d');
         new Chart(ctx, {
             type: 'radar',
@@ -77,6 +81,46 @@
                 plugins: { legend: { display: false } }
             }
         });
+
+        // --- 3. CLOUD SYNC LOGIC ---
+        async function logSession() {
+            const status = document.getElementById('sync-status');
+            status.innerText = "● SYNCING...";
+            status.className = "text-xs text-blue-500 font-mono";
+
+            const payload = {
+                length_bpel: document.getElementById('len-in').value,
+                girth_mid: document.getElementById('gir-in').value,
+                eq_score: document.getElementById('eq-in').value
+            };
+
+            const response = await fetch(`${SB_URL}/rest/v1/performance_logs`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SB_KEY,
+                    'Authorization': `Bearer ${SB_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                status.innerText = "● DATA SECURED";
+                status.className = "text-xs text-green-500 font-mono";
+                alert("Session metrics synced to cloud.");
+            } else {
+                status.innerText = "● SYNC ERROR";
+                status.className = "text-xs text-red-500 font-mono";
+            }
+        }
+
+        // --- 4. THE BOSS KEY (PRESS ESC TO HIDE) ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.location.href = 'https://www.google.com/search?q=mitosis+notes';
+            }
+        });
     </script>
 </body>
-</html> 
+</html>
