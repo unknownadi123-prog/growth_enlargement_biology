@@ -7,18 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Immersive, moody branding to match the reference */
         .page-mood { 
-            /* CHANGE 1: Full-screen background image */
             background-image: url('register-vibe.jpg'); 
             background-size: cover;
             background-position: top center;
-            background-attachment: fixed; /* Keeps image static on scroll */
+            background-attachment: fixed;
+            background-color: black;
         }
-        
-        /* Ensures the text is extremely clear on the dark image */
         .text-cipher { filter: grayscale(100%) brightness(200%) contrast(150%); }
-
         @keyframes pulse-red {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
@@ -29,19 +25,15 @@
 <body class="bg-black text-slate-100 min-h-screen font-mono uppercase selection:bg-red-800 page-mood">
 
     <div class="grid grid-cols-1 md:grid-cols-2 min-h-screen">
-        
         <div class="relative p-10 flex flex-col justify-between md:border-r md:border-red-900/20">
             <div class="absolute inset-0 bg-gradient-to-l from-black via-transparent to-transparent opacity-90 z-10"></div>
-            
             <div class="text-[10px] text-red-600 font-black tracking-[0.5em] status-pulse relative z-20">
                 STATUS: INITIALIZING_NEW_SUBJECT
             </div>
-            
-            </div>
+        </div>
 
         <div class="flex items-center justify-center p-8 lg:p-20 relative bg-black/60 md:bg-black/80 backdrop-blur-md">
             <div class="w-full max-w-sm space-y-12 z-20">
-                
                 <div class="text-center space-y-2">
                     <h2 class="text-4xl font-black italic text-white tracking-tighter uppercase mb-1">New_Build</h2>
                     <p class="text-[10px] text-red-600 uppercase tracking-[0.4em] font-bold">Registration // Station_045</p>
@@ -51,17 +43,17 @@
                 <div class="space-y-6">
                     <div class="space-y-1">
                         <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Assign_User_ID</label>
-                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-slate-900 border border-slate-800 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
+                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-slate-900 border border-slate-800 p-4 outline-none focus:border-red-600 text-sm text-white transition">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Security_Cipher</label>
-                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
+                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition">
                     </div>
                     
                     <div class="flex flex-col gap-3 pt-4">
-                      <button onclick="signUp()" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">
-    Initialize_Subject
-               </button>
+                        <button onclick="handleSignUp()" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">
+                            Initialize_Subject
+                        </button>
                         
                         <div class="text-center pt-2">
                             <a href="login.html" class="text-slate-600 text-[9px] uppercase font-bold hover:text-red-500 transition tracking-widest">
@@ -73,48 +65,47 @@
 
                 <div class="pt-8 border-t border-slate-800 text-cipher text-center">
                     <p id="msg" class="text-[10px] text-red-600 uppercase font-bold tracking-widest min-h-[20px] mb-4"></p>
-                    <p class="text-[9px] text-slate-600">AES-256-GCM SECURE CHANNEL // LYS4OQ45tU1... ACTIVE</p>
+                    <p class="text-[9px] text-slate-600">AES-256-GCM SECURE CHANNEL // ACTIVE</p>
                 </div>
             </div>
         </div>
     </div>
 
-   <script>
-    // These link to your existing Growth project
-    const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-    const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-    const supabase = supabase.createClient(SB_URL, SB_KEY);
+    <script>
+        // FIXED: Using a unique variable name to avoid "already declared" error
+        const apexAuth = supabase.createClient(
+            'https://upfmksjiyptnckjauaut.supabase.co', 
+            'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe'
+        );
 
-    async function signUp() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const msgBox = document.getElementById('msg');
-        
-        if(!email || !password) {
-            msgBox.innerText = "ALERT: DATA_MISSING";
-            return;
-        }
-
-        msgBox.innerText = "INDEXING_BIOMETRICS...";
-
-        // This is the actual command that talks to Supabase
-        const { data, error } = await supabase.auth.signUp({ 
-            email: email, 
-            password: password 
-        });
-
-        if (error) {
-            msgBox.innerText = "DENIED: " + error.message.toUpperCase();
-        } else {
-            msgBox.style.color = "#22c55e"; // Green for success
-            msgBox.innerText = "SUBJECT_CREATED. REDIRECTING...";
+        async function handleSignUp() {
+            console.log("System: Signup sequence initiated.");
+            const emailInput = document.getElementById('email').value;
+            const passwordInput = document.getElementById('password').value;
+            const msgBox = document.getElementById('msg');
             
-            // Wait 2 seconds so the user sees the success message
-            setTimeout(() => { 
-                window.location.href = 'dashboard.html'; 
-            }, 2000);
+            msgBox.style.color = "#dc2626"; // Default error red
+            
+            if(!emailInput || !passwordInput) {
+                msgBox.innerText = "ALERT: DATA_MISSING";
+                return;
+            }
+
+            msgBox.innerText = "INDEXING_BIOMETRICS...";
+
+            const { data, error } = await apexAuth.auth.signUp({ 
+                email: emailInput, 
+                password: passwordInput 
+            });
+
+            if (error) {
+                msgBox.innerText = "DENIED: " + error.message.toUpperCase();
+            } else {
+                msgBox.style.color = "#22c55e"; // Success green
+                msgBox.innerText = "SUBJECT_CREATED. REDIRECTING...";
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
