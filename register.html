@@ -77,30 +77,42 @@
         </div>
     </div>
 
-    <script>
-        const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-        const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
+   <script>
+    // These link to your existing Growth project
+    const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
+    const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+    const supabase = supabase.createClient(SB_URL, SB_KEY);
 
-        async function auth(type) {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const msgBox = document.getElementById('msg');
-            
-            msgBox.innerText = "INDEXING_BIOMETRICS...";
-
-            const { data, error } = await supabase.auth.signUp({ email, password });
-
-            if (error) {
-                msgBox.innerText = "ALERT: " + error.message.toUpperCase();
-            } else {
-                msgBox.className = "text-[10px] text-green-500 uppercase font-bold tracking-widest";
-                msgBox.innerText = "SUCCESS: SUBJECT_CREATED. REDIRECTING...";
-                setTimeout(() => { 
-                    window.location.href = 'dashboard.html'; 
-                }, 2000);
-            }
+    async function signUp() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msgBox = document.getElementById('msg');
+        
+        if(!email || !password) {
+            msgBox.innerText = "ALERT: DATA_MISSING";
+            return;
         }
-    </script>
+
+        msgBox.innerText = "INDEXING_BIOMETRICS...";
+
+        // This is the actual command that talks to Supabase
+        const { data, error } = await supabase.auth.signUp({ 
+            email: email, 
+            password: password 
+        });
+
+        if (error) {
+            msgBox.innerText = "DENIED: " + error.message.toUpperCase();
+        } else {
+            msgBox.style.color = "#22c55e"; // Green for success
+            msgBox.innerText = "SUBJECT_CREATED. REDIRECTING...";
+            
+            // Wait 2 seconds so the user sees the success message
+            setTimeout(() => { 
+                window.location.href = 'dashboard.html'; 
+            }, 2000);
+        }
+    }
+</script>
 </body>
 </html>
