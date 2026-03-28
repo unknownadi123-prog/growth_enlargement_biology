@@ -2,77 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Biology Lab Notes - Unit 4</title>
+    <title>Apex Labs // Core Biometrics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans">
+<body class="bg-[#020617] text-slate-100 font-mono uppercase tracking-tight">
 
-    <nav class="border-b border-slate-800 p-4 flex justify-between items-center">
-        <h1 class="text-xs font-mono text-slate-500 uppercase tracking-widest">Research_Project_Alpha // Secure_Vault</h1>
-        <div id="sync-status" class="text-xs text-yellow-500 font-mono">● STANDBY</div>
+    <nav class="border-b border-slate-800 p-4 flex justify-between items-center bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <h1 class="text-[10px] text-slate-500 tracking-[0.3em]">STATION_ID: LYS4OQ45 // <span class="text-blue-500">OPERATOR_ACTIVE</span></h1>
+        </div>
+        <div class="flex items-center gap-6">
+            <div id="sync-status" class="text-[10px] text-yellow-500 animate-pulse">● STANDBY</div>
+            <button onclick="logout()" class="text-[10px] border border-red-900/50 px-3 py-1 text-red-500 hover:bg-red-900 hover:text-white transition">KILL_SESSION</button>
+        </div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-6 space-y-8">
-        <section class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 shadow-xl text-center">
-            <h2 class="text-xl font-bold mb-4 text-cyan-400">Anatomical Performance Map</h2>
-            <div class="w-full max-w-md mx-auto">
+        
+        <section class="bg-slate-900/80 rounded-sm p-8 border border-slate-800 shadow-2xl text-center">
+            <h2 class="text-xs font-black mb-8 text-blue-500 tracking-[0.5em]">ANATOMICAL_PERFORMANCE_MAP</h2>
+            <div class="w-full max-w-xs mx-auto">
                 <canvas id="performanceRadar"></canvas>
             </div>
         </section>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
-                <h3 class="text-lg font-semibold mb-4">Metric Input</h3>
-                <div class="space-y-4">
+            <section class="bg-slate-900/80 rounded-sm p-6 border border-slate-800">
+                <h3 class="text-xs font-black mb-6 text-slate-400 tracking-[0.2em]">INITIALIZE_DATA_INJECTION</h3>
+                <div class="space-y-6">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Length (BPEL)</label>
-                        <input type="number" id="len-in" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
+                        <label class="block text-[9px] text-slate-500 mb-2 tracking-widest">SPEC_LENGTH (BPEL)</label>
+                        <input type="number" id="len-in" step="0.1" class="w-full bg-[#020617] border border-slate-800 p-3 focus:border-blue-600 outline-none text-white transition">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Girth (Mid)</label>
-                        <input type="number" id="gir-in" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-cyan-500 outline-none">
+                        <label class="block text-[9px] text-slate-500 mb-2 tracking-widest">SPEC_GIRTH (MID)</label>
+                        <input type="number" id="gir-in" step="0.1" class="w-full bg-[#020617] border border-slate-800 p-3 focus:border-blue-600 outline-none text-white transition">
                     </div>
                 </div>
             </section>
 
-            <section class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
-                <h3 class="text-lg font-semibold mb-4">EQ & Stamina</h3>
-                <div class="space-y-4">
-                    <label class="block text-xs text-slate-400 mb-1 text-center">Hardness Score: 1-10</label>
-                    <input type="range" id="eq-in" min="1" max="10" class="w-full accent-cyan-500">
-                    <button onclick="logSession()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition uppercase text-sm tracking-widest">Start Training Session</button>
+            <section class="bg-slate-900/80 rounded-sm p-6 border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xs font-black mb-6 text-slate-400 tracking-[0.2em]">EQ_&_HARDNESS_SCORE</h3>
+                    <div class="space-y-4">
+                        <label class="block text-[10px] text-blue-500 mb-1 text-center font-bold">HARDNESS_INDEX: 1-10</label>
+                        <input type="range" id="eq-in" min="1" max="10" class="w-full accent-blue-600 bg-slate-800 h-1 appearance-none">
+                    </div>
                 </div>
+                <button onclick="logSession()" class="mt-8 w-full bg-blue-700 hover:bg-white hover:text-black text-white font-black py-4 transition uppercase text-[11px] tracking-[0.3em]">COMMIT_PROTOCOLS</button>
             </section>
         </div>
     </main>
 
     <script>
-        // --- 1. CLOUD CONFIG (PASTE YOUR KEYS HERE) ---
-      const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-      const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
+        const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
+
+        // --- 1. SECURITY LOCK ---
+        async function checkUser() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html'; 
+            }
+        }
+        checkUser();
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        }
 
         // --- 2. THE RADAR CHART ---
         const ctx = document.getElementById('performanceRadar').getContext('2d');
         new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: ['Length', 'Girth', 'Hardness', 'Stamina', 'Recovery', 'Control'],
+                labels: ['LENGTH', 'GIRTH', 'HARDNESS', 'STAMINA', 'RECOVERY', 'CONTROL'],
                 datasets: [{
-                    label: 'Current Status',
                     data: [5, 4, 7, 3, 6, 5], 
-                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
-                    borderColor: 'rgba(34, 211, 238, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#22d3ee'
+                    backgroundColor: 'rgba(29, 78, 216, 0.2)', // Matches blue theme
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                    pointBackgroundColor: '#2563eb'
                 }]
             },
             options: {
                 scales: {
                     r: {
-                        angleLines: { color: '#334155' },
-                        grid: { color: '#334155' },
-                        pointLabels: { color: '#94a3b8', font: { size: 12 } },
+                        angleLines: { color: '#1e293b' },
+                        grid: { color: '#1e293b' },
+                        pointLabels: { color: '#64748b', font: { size: 8, weight: 'bold' } },
                         ticks: { display: false },
                         suggestedMin: 0,
                         suggestedMax: 10
@@ -82,11 +104,11 @@
             }
         });
 
-        // --- 3. CLOUD SYNC LOGIC ---
+        // --- 3. DATA INJECTION LOGIC ---
         async function logSession() {
             const status = document.getElementById('sync-status');
-            status.innerText = "● SYNCING...";
-            status.className = "text-xs text-blue-500 font-mono";
+            status.innerText = "● UPLOADING...";
+            status.className = "text-[10px] text-blue-500 font-mono animate-pulse";
 
             const payload = {
                 length_bpel: document.getElementById('len-in').value,
@@ -106,34 +128,21 @@
             });
 
             if (response.ok) {
-                status.innerText = "● DATA SECURED";
-                status.className = "text-xs text-green-500 font-mono";
-                alert("Session metrics synced to cloud.");
+                status.innerText = "● ENCRYPTED_SUCCESS";
+                status.className = "text-[10px] text-green-500 font-mono";
+                setTimeout(() => { status.innerText = "● STANDBY"; status.className = "text-[10px] text-yellow-500"; }, 3000);
             } else {
-                status.innerText = "● SYNC ERROR";
-                status.className = "text-xs text-red-500 font-mono";
+                status.innerText = "● UPLINK_FAILURE";
+                status.className = "text-[10px] text-red-500 font-mono";
             }
         }
 
-        // --- 4. THE BOSS KEY (PRESS ESC TO HIDE) ---
+        // --- 4. BOSS KEY (ESC) ---
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 window.location.href = 'https://www.google.com/search?q=mitosis+notes';
             }
         });
-        // Add this inside your <script> tag in dashboard.html
-async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-        window.location.href = 'login.html'; // Kick out unauthorized users
-    }
-}
-checkUser();
-
-async function logout() {
-    await supabase.auth.signOut();
-    window.location.href = 'index.html';
-}
     </script>
 </body>
 </html>
