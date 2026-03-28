@@ -2,36 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>APEX // Core Access</title>
+    <title>APEX // Private Uplink</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-[#020617] text-slate-200 flex items-center justify-center min-h-screen font-mono p-6">
-    <div class="w-full max-w-sm">
-        <div class="text-center mb-10 border border-slate-700/50 bg-slate-950/50 p-4 rounded-lg">
-            <h2 class="text-4xl font-black italic text-white tracking-tighter uppercase mb-1">Access_Denied</h2>
-            <p class="text-[10px] text-blue-600 uppercase tracking-[0.4em] font-bold">Secure Core Access Required</p>
+    <div class="w-full max-w-sm border border-slate-800 p-8 bg-slate-900/50 backdrop-blur-lg">
+        <div class="mb-10 text-center">
+            <h2 class="text-2xl font-black italic text-white uppercase tracking-tighter">Identity_Check</h2>
+            <div class="h-1 w-8 bg-blue-600 mx-auto mt-2"></div>
         </div>
 
-        <div class="bg-slate-950 p-1 border-t-2 border-blue-600 shadow-2xl shadow-blue-950/20 rounded">
-            <div class="p-8 space-y-6">
-                <div class="space-y-1.5">
-                    <label class="text-[9px] uppercase font-bold text-slate-500 tracking-widest block">User ID (Email)</label>
-                    <input type="email" id="email" class="w-full bg-[#020617] border border-slate-800 p-4 rounded outline-none focus:border-blue-600 text-sm text-white transition">
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-[9px] uppercase font-bold text-slate-500 tracking-widest block">Password</label>
-                    <input type="password" id="password" class="w-full bg-[#020617] border border-slate-800 p-4 rounded outline-none focus:border-blue-600 text-sm text-white transition">
-                </div>
-                <button onclick="auth('login')" class="w-full bg-blue-600 py-5 rounded font-black uppercase tracking-[0.3em] text-xs hover:bg-white hover:text-black transition duration-300 transform hover:scale-[1.02]">Authorize Access</button>
-                <button onclick="auth('signup')" class="w-full text-slate-600 text-[9px] uppercase font-bold hover:text-blue-400 transition">Register_New_Build</button>
+        <div class="space-y-6">
+            <div>
+                <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">User_ID</label>
+                <input type="email" id="email" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-blue-600 text-sm text-white transition mt-1">
             </div>
+            <div>
+                <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Security_Cipher</label>
+                <input type="password" id="password" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-blue-600 text-sm text-white transition mt-1">
+            </div>
+            <button onclick="auth('login')" class="w-full bg-blue-700 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300">Authorize_Access</button>
+            <button onclick="auth('signup')" class="w-full text-slate-600 text-[8px] uppercase font-bold hover:text-blue-500 transition">Register_New_Build</button>
         </div>
-        <p id="msg" class="mt-6 text-[10px] text-red-600 uppercase text-center font-bold tracking-widest bg-red-950/20 py-2 rounded hidden"></p>
+        <p id="msg" class="mt-6 text-[9px] text-red-500 uppercase text-center font-bold tracking-widest"></p>
     </div>
 
     <script>
-        // PASTE YOUR REAL KEYS HERE
         const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
         const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
         const supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -39,19 +36,12 @@
         async function auth(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const msgEl = document.getElementById('msg');
-            msgEl.classList.add('hidden'); // Reset message
-
-            const { data, error } = (type === 'signup') 
+            const { error } = (type === 'signup') 
                 ? await supabase.auth.signUp({ email, password })
                 : await supabase.auth.signInWithPassword({ email, password });
 
-            if (error) {
-                msgEl.innerText = "ALERT: " + error.message.toUpperCase();
-                msgEl.classList.remove('hidden');
-            } else {
-                window.location.href = 'dashboard.html';
-            }
+            if (error) document.getElementById('msg').innerText = "ALERT: " + error.message.toUpperCase();
+            else window.location.href = 'dashboard.html';
         }
     </script>
 </body>
