@@ -7,14 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Focus the image on the subject (right side of the file) */
+        /* Focus the image on the subject */
         .mood-image { 
             filter: grayscale(100%) contrast(125%) brightness(60%);
-            
-            /* 2. ADD THIS LINE BELOW (Flips the image) */
-              transform: scaleX(-1);
-            
-            object-position: right center; /* Shifts subject into view */
+            /* Flips the image as requested */
+            transform: scaleX(-1);
+            object-position: right center; 
         }
         
         .form-scanlines::before {
@@ -49,38 +47,68 @@
                 <div class="space-y-6">
                     <div class="space-y-1">
                         <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">User ID</label>
-                        <input type="email" id="email" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition">
+                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Password Cipher</label>
-                        <input type="password" id="password" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition">
+                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
                     </div>
-                    <button onclick="auth('login')" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">EXECUTE UPLINK</button>
-                   <button onclick="window.location.href='register.html'" class="w-full text-slate-600 text-[9px] uppercase font-bold hover:text-red-500 transition">Register New Apex Build</button>
+                    
+                    <button onclick="handleLogin()" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">
+                        EXECUTE UPLINK
+                    </button>
+                    
+                    <button onclick="window.location.href='register.html'" class="w-full text-slate-600 text-[9px] uppercase font-bold hover:text-red-500 transition tracking-widest">
+                        Register New Apex Build
+                    </button>
                 </div>
 
                 <div class="pt-8 border-t border-slate-800 text-center">
                     <p id="msg" class="text-[10px] text-red-600 uppercase font-bold tracking-widest min-h-[20px]"></p>
-                    <p class="text-[9px] text-slate-600 mt-4">AES-256-GCM SECURE CHANNEL // LYS4OQ45tU1... ACTIVE</p>
+                    <p class="text-[9px] text-slate-600 mt-4 tracking-tighter">AES-256-GCM SECURE CHANNEL // ACTIVE</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Use a unique name for the client to prevent global naming conflicts
         const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
         const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
+        const apexLoginClient = supabase.createClient(SB_URL, SB_KEY);
 
-        async function auth(type) {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const { error } = (type === 'signup') 
-                ? await supabase.auth.signUp({ email, password })
-                : await supabase.auth.signInWithPassword({ email, password });
+        async function handleLogin() {
+            const emailInput = document.getElementById('email').value;
+            const passwordInput = document.getElementById('password').value;
+            const msgBox = document.getElementById('msg');
+            
+            if(!emailInput || !passwordInput) {
+                msgBox.style.color = "#dc2626";
+                msgBox.innerText = "ALERT: CREDENTIALS_REQUIRED";
+                return;
+            }
 
-            if (error) document.getElementById('msg').innerText = "ALERT: " + error.message.toUpperCase();
-            else window.location.href = 'dashboard.html';
+            msgBox.style.color = "#3b82f6";
+            msgBox.innerText = "VERIFYING_UPLINK...";
+
+            // Use signInWithPassword for the login flow
+            const { data, error } = await apexLoginClient.auth.signInWithPassword({ 
+                email: emailInput, 
+                password: passwordInput 
+            });
+
+            if (error) {
+                msgBox.style.color = "#dc2626";
+                msgBox.innerText = "DENIED: " + error.message.toUpperCase();
+            } else {
+                msgBox.style.color = "#22c55e";
+                msgBox.innerText = "ACCESS_GRANTED. INITIALIZING_SESSION...";
+                
+                // Redirecting to your dashboard
+                setTimeout(() => { 
+                    window.location.href = 'dashboard.html'; 
+                }, 1500);
+            }
         }
     </script>
 </body>
