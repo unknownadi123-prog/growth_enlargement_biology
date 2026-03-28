@@ -10,6 +10,10 @@
         /* Focus the image on the subject (right side of the file) */
         .mood-image { 
             filter: grayscale(100%) contrast(125%) brightness(60%);
+            
+            /* 2. ADD THIS LINE BELOW (Flips the image) */
+              transform: scaleX(-1);
+            
             object-position: right center; /* Shifts subject into view */
         }
         
