@@ -7,61 +7,93 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* This matches your login page framing exactly */
+        /* Focus and flip the image so he faces the form from the left */
         .mood-image { 
-            filter: grayscale(100%) contrast(125%) brightness(55%);
-            /* Flips him to face the form */
-            transform: scaleX(-1); 
-            /* Forces the subject into the frame */
-            object-position: center; 
+            filter: grayscale(100%) contrast(125%) brightness(50%);
+            transform: scaleX(-1);
+            object-position: left center; 
         }
         
-        /* The grid background for the right side */
-        .bg-grid {
-            background-image: linear-gradient(to right, #0f172a 1px, transparent 1px), 
-                              linear-gradient(to bottom, #0f172a 1px, transparent 1px);
-            background-size: 30px 30px;
+        /* Red-tinted scanlines for the registration side */
+        .form-scanlines::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(255, 0, 0, 0.05) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 0, 0, 0.02), rgba(255, 0, 0, 0.04));
+            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.15;
         }
-
-        @keyframes pulse-red {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .status-pulse { animation: pulse-red 2s infinite; }
     </style>
 </head>
-<body class="bg-[#020617] text-slate-200 min-h-screen flex font-mono uppercase tracking-tight selection:bg-red-900">
+<body class="bg-[#020617] text-slate-200 min-h-screen flex font-mono uppercase selection:bg-red-800">
 
     <div class="grid grid-cols-1 md:grid-cols-2 w-full">
         
-        <div class="relative overflow-hidden hidden md:block border-r border-slate-800">
-            <img src="login-vibe.jpg" alt="Subject" class="absolute inset-0 w-full h-full object-cover mood-image">
-            
+        <div class="relative overflow-hidden hidden md:block border-r border-red-900/30">
+            <img src="login-vibe.jpg" alt="Optimal Build" class="absolute inset-0 w-full h-full object-cover mood-image">
             <div class="absolute inset-0 bg-gradient-to-l from-[#020617] via-transparent to-transparent opacity-90"></div>
-            
-            <div class="absolute top-10 left-10 text-red-600 text-[10px] font-black tracking-[0.5em] status-pulse">
-                STATUS: INITIALIZING_NEW_SUBJECT
+            <div class="absolute bottom-10 left-10 p-4 border border-red-900/30 bg-slate-900/50 backdrop-blur-md text-red-500 text-[10px] font-black tracking-[0.4em]">
+                PROTOCOL: NEW_BUILD // INITIALIZING [v.04]
             </div>
         </div>
 
-        <div class="flex items-center justify-center p-8 lg:p-20 relative bg-grid">
-            <div class="w-full max-w-sm space-y-12 z-20">
+        <div class="flex items-center justify-center p-8 lg:p-20 relative form-scanlines">
+            <div class="w-full max-w-sm space-y-12">
                 
                 <div class="text-center space-y-2">
-                    <h2 class="text-4xl font-black italic text-white tracking-tighter uppercase mb-1">New_Build</h2>
-                    <p class="text-[10px] text-red-600 uppercase tracking-[0.4em] font-bold">Registration // Station_045</p>
+                    <h2 class="text-4xl font-black italic text-white tracking-tighter uppercase mb-1">Registration</h2>
+                    <p class="text-[10px] text-red-600 uppercase tracking-[0.4em] font-bold">Create Private Vault // Station_045</p>
                     <div class="h-[1px] w-24 bg-red-800 mx-auto"></div>
                 </div>
 
                 <div class="space-y-6">
                     <div class="space-y-1">
-                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Assign_User_ID</label>
-                        <input type="email" id="email" placeholder="OPERATOR@APEX.LABS" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
+                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">New User ID</label>
+                        <input type="email" id="email" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Security_Cipher</label>
-                        <input type="password" id="password" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition placeholder:text-slate-800">
+                        <label class="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em]">Set Password Cipher</label>
+                        <input type="password" id="password" class="w-full bg-slate-900 border border-slate-700 p-4 outline-none focus:border-red-600 text-sm text-white transition">
                     </div>
+                    <button onclick="auth('signup')" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[10px] text-white hover:bg-white hover:text-black transition duration-300 transform hover:-translate-y-1">Initialize_Entry</button>
                     
-                    <div class="flex flex-col gap-4 pt-4">
-                        <button onclick="signUp()" class="w-full bg-red-800 py-5 font-black uppercase tracking-[0.3em] text-[11px] text-white hover:bg-white hover:text-black transition duration-30
+                    <div class="text-center">
+                        <button onclick="window.location.href='login.html'" class="text-slate-600 text-[9px] uppercase font-bold hover:text-red-500 transition tracking-widest">
+                            Existing Operator? Uplink_Access
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-slate-800 text-center">
+                    <p id="msg" class="text-[10px] text-red-600 uppercase font-bold tracking-widest min-h-[20px]"></p>
+                    <p class="text-[9px] text-slate-600 mt-4">SECURE_ENCRYPTION_ACTIVE // SYNC_STATUS: READY</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
+        const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
+
+        async function auth(type) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msgBox = document.getElementById('msg');
+            
+            msgBox.innerText = "PROCESSING...";
+
+            const { error } = await supabase.auth.signUp({ email, password });
+
+            if (error) {
+                msgBox.innerText = "ALERT: " + error.message.toUpperCase();
+            } else {
+                msgBox.className = "text-[10px] text-green-500 uppercase font-bold tracking-widest";
+                msgBox.innerText = "SUCCESS: SUBJECT_CREATED. REDIRECTING...";
+                setTimeout(() => { 
+                    window.location.href = 'dashboard.html'; 
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
