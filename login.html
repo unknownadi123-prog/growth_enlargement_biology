@@ -7,27 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Unique Scanline Effect on the Form Side */
-        .form-scanlines::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
-            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.1;
-        }
-        /* Grayscale and moody styling for the image */
-        .mood-image { filter: grayscale(100%) contrast(125%) brightness(60%); }
-    </style>
-</head>
-<body class="bg-[#020617] text-slate-200 min-h-screen flex font-mono uppercase selection:bg-red-800">
+    /* Focus the image on the subject (right side of the file) */
+    .mood-image { 
+        filter: grayscale(100%) contrast(125%) brightness(60%);
+        object-position: right center; /* This shifts the 'Abs Guy' into view */
+    }
+    
+    .form-scanlines::before {
+        content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                    linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+        z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.1;
+    }
+</style>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 w-full">
-        
-        <div class="relative overflow-hidden hidden md:block border-r border-slate-800">
-            <img src="login-vibe.jpg" alt="Optimal Build" class="absolute inset-0 w-full h-full object-cover object-center mood-image scale-110">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617] opacity-60"></div>
-            <div class="absolute bottom-10 left-10 p-4 border border-blue-900/30 bg-slate-900/50 backdrop-blur-md text-blue-500 text-[10px] font-black tracking-[0.4em]">
-                PROTOCOL: APEX_GAINS // ACTIVE [v.04]
-            </div>
-        </div>
+<div class="relative overflow-hidden hidden md:block border-r border-slate-800">
+    <img src="login-vibe.jpg" alt="Optimal Build" class="absolute inset-0 w-full h-full object-cover mood-image">
+    <div class="absolute inset-0 bg-gradient-to-l from-[#020617] via-transparent to-transparent opacity-90"></div>
+    <div class="absolute bottom-10 left-10 p-4 border border-blue-900/30 bg-slate-900/50 backdrop-blur-md text-blue-500 text-[10px] font-black tracking-[0.4em]">
+        PROTOCOL: APEX_GAINS // ACTIVE [v.04]
+    </div>
+</div> 
 
         <div class="flex items-center justify-center p-8 lg:p-20 relative form-scanlines">
             <div class="w-full max-w-sm space-y-12">
