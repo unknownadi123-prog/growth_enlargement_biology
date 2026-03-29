@@ -24,167 +24,258 @@
             backdrop-filter: blur(12px);
         }
 
+        .biometric-container {
+            position: relative;
+            background: #000;
+            border-radius: 30px;
+        }
+
+        .hologram-asset {
+            mix-blend-mode: lighten;
+            filter: contrast(1.2) brightness(1.1);
+        }
+
+        .floating-scan-card {
+            position: absolute;
+            top: 15%;
+            right: 8%;
+            width: 180px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(153, 27, 27, 0.5);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(153, 27, 27, 0.2);
+            z-index: 10;
+        }
+
+        .scan-animation {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #991b1b, transparent);
+            position: absolute;
+            box-shadow: 0 0 15px #991b1b;
+            animation: moveScan 4s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        @keyframes moveScan {
+            0% { top: 5%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 95%; opacity: 0; }
+        }
+
         .text-apex-red { color: #991b1b; }
         .bg-apex-red { background-color: #991b1b; }
         
         .sidebar { width: 70px; transition: width 0.3s; overflow: hidden; white-space: nowrap; }
         .sidebar:hover { width: 260px; }
-
-        .view-content { display: none; }
-        .view-content.active { display: block; }
-
-        input[type=range] { accent-color: #991b1b; }
-        ::-webkit-scrollbar { width: 0px; }
-        .hidden { display: none !important; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <div id="calibration-overlay" class="fixed inset-0 z-[100] bg-[#020617] flex items-center justify-center p-6">
-        <div class="max-w-2xl w-full glass-card p-12 border-t-4 border-apex-red relative overflow-hidden">
-            <div class="absolute top-0 left-0 h-1 bg-apex-red transition-all duration-500" id="wiz-progress" style="width: 10%;"></div>
-
-            <div id="step-1" class="wiz-step">
-                <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_01 // VITALS</span>
-                <h2 class="text-2xl font-black text-white italic mt-2 mb-8">BIOMETRIC_BASELINE</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="q-age" placeholder="AGE" class="bg-slate-900 border border-slate-700 p-4 rounded text-white focus:border-apex-red outline-none">
-                    <input type="number" id="q-height" placeholder="HEIGHT (CM)" class="bg-slate-900 border border-slate-700 p-4 rounded text-white focus:border-apex-red outline-none">
-                    <input type="number" id="q-weight" placeholder="WEIGHT (KG)" class="bg-slate-900 border border-slate-700 p-4 rounded text-white focus:border-apex-red outline-none">
-                    <input type="number" id="q-fat" placeholder="BODY_FAT %" class="bg-slate-900 border border-slate-700 p-4 rounded text-white focus:border-apex-red outline-none">
-                </div>
-                <button onclick="nextWizStep(1, 2)" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic hover:bg-white hover:text-black transition">CONTINUE_UPLINK</button>
-            </div>
-
-            <div id="step-2" class="wiz-step hidden">
-                <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_02 // ACTIVITY</span>
-                <h2 class="text-2xl font-black text-white italic mt-2 mb-6">SEXUAL_FREQUENCY?</h2>
-                <div class="space-y-3">
-                    <button onclick="setFreq(1)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f1">1. 1-2 TIMES / MONTH</button>
-                    <button onclick="setFreq(2)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f2">2. 4-5 TIMES / MONTH</button>
-                    <button onclick="setFreq(3)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f3">3. 2-4 TIMES / WEEK</button>
-                    <button onclick="setFreq(4)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f4">4. EVERYDAY</button>
-                </div>
-                <button onclick="nextWizStep(2, 3)" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">NEXT_PHASE</button>
-            </div>
-
-            <div id="step-3" class="wiz-step hidden">
-                <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_03 // GROWTH_MATRIX</span>
-                <h2 class="text-2xl font-black text-white italic mt-2 mb-8">CURRENT & TARGET</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4">
-                        <p class="text-[9px] text-slate-500">CURRENT_LENGTH (BPEL)</p>
-                        <input type="number" id="q-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
-                        <p class="text-[9px] text-slate-500">CURRENT_GIRTH</p>
-                        <input type="number" id="q-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
-                    </div>
-                    <div class="space-y-4">
-                        <p class="text-[9px] text-slate-500">TARGET_LENGTH</p>
-                        <input type="number" id="q-t-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
-                        <p class="text-[9px] text-slate-500">TARGET_GIRTH</p>
-                        <input type="number" id="q-t-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
-                    </div>
-                </div>
-                <button onclick="nextWizStep(3, 4)" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">FINAL_STEPS</button>
-            </div>
-
-            <div id="step-4" class="wiz-step hidden">
-                <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_04 // OPTIMIZATION</span>
-                <h2 class="text-2xl font-black text-white italic mt-2 mb-8">LIFESTYLE_FACTORS</h2>
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-[9px] text-slate-500 mb-2">AVG_SLEEP: <span id="s-val">7</span>H</p>
-                        <input type="range" id="q-sleep" min="4" max="10" value="7" oninput="document.getElementById('s-val').innerText=this.value" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    <select id="q-activity" class="w-full bg-slate-900 border border-slate-700 p-4 rounded text-white outline-none">
-                        <option value="1">SEDENTARY</option>
-                        <option value="2">ACTIVE</option>
-                        <option value="3">ATHLETE</option>
-                    </select>
-                </div>
-                <button onclick="finalizeCalibration()" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">INITIALIZE_SYSTEM</button>
-                
-            </div>
-        </div>
-    </div>
-
     <aside class="sidebar bg-[#020617] border-r border-slate-800 flex flex-col z-50 group">
         <div class="p-4 mb-10"><div class="w-10 h-10 bg-apex-red rounded-sm"></div></div>
         <nav class="flex-1 px-3 space-y-6">
-            <div onclick="switchView('dashboard')" class="p-2 text-white hover:bg-slate-800/50 rounded-lg cursor-pointer flex items-center gap-4 transition">
-                <span class="text-2xl">🖥️</span> <span class="group-hover:inline hidden text-[12px] font-bold">MISSION_CONTROL</span>
+            <div class="p-2 text-slate-500 hover:text-white cursor-pointer flex items-center gap-4">
+                <span class="text-2xl">⚙️</span> <span class="group-hover:inline hidden text-[12px]">OPERATOR_SETTINGS</span>
+            </div>
+            <div class="p-2 text-slate-500 hover:text-white cursor-pointer flex items-center gap-4">
+                <span class="text-2xl">👤</span> <span class="group-hover:inline hidden text-[12px]">ID: STATION_045</span>
             </div>
         </nav>
     </aside>
 
     <main class="flex-1 flex flex-col p-8 relative overflow-y-auto">
         <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-black italic text-white leading-none">OPERATOR_<span class="text-apex-red">UNKNWN</span></h1>
+            <div class="flex flex-col">
+                <span class="text-[12px] text-apex-red font-bold tracking-[0.3em]">COMMAND_PROTOCOL_ACTIVE</span>
+                <h1 class="text-3xl font-black italic text-white leading-none">OPERATOR_<span class="text-apex-red">OPERATOR</span></h1>
+            </div>
+            
+            <nav class="bg-slate-900/50 border border-slate-800 rounded-full px-8 py-3 flex gap-10">
+                <a href="#" class="text-[12px] font-bold text-white border-b-2 border-apex-red">01_COMMAND</a>
+                <a href="#" class="text-[12px] font-bold text-slate-500 hover:text-white">02_VAULT</a>
+                <a href="#" class="text-[12px] font-bold text-slate-500 hover:text-white">03_GYM</a>
+                <a href="#" class="text-[12px] font-bold text-slate-500 hover:text-white">04_SIM</a>
+            </nav>
+
+            <div class="text-right">
+                <span class="text-[11px] text-slate-500 block">UPLINK_STATION</span>
+                <span class="text-[12px] font-bold text-blue-500 animate-pulse">SYNC_ACTIVE // STATION_045</span>
+            </div>
         </header>
 
-        <div id="view-dashboard" class="view-content active">
-            <div class="grid grid-cols-2 gap-4 max-w-md">
-                <div class="glass-card p-5 border-l-4 border-apex-red">
-                    <p class="text-[10px] text-slate-500 font-bold">LENGTH</p>
-                    <p id="dash-length" class="text-2xl font-black text-white italic">0.00 IN</p>
+        <div class="grid grid-cols-12 gap-8 flex-1">
+            
+            <div class="col-span-5 flex flex-col">
+                <div class="flex gap-4 mb-6">
+                    <div class="glass-card flex-1 p-5 border-l-4 border-apex-red">
+                        <p class="text-[10px] text-slate-500 font-bold">LENGTH (BPEL)</p>
+                        <p class="text-2xl font-black text-white italic">8.20 <span class="text-[12px] text-slate-600">IN</span></p>
+                    </div>
+                    <div class="glass-card flex-1 p-5 border-l-4 border-apex-red">
+                        <p class="text-[10px] text-slate-500 font-bold">GIRTH (MID)</p>
+                        <p class="text-2xl font-black text-white italic">5.80 <span class="text-[12px] text-slate-600">IN</span></p>
+                    </div>
                 </div>
-                <div class="glass-card p-5 border-l-4 border-apex-red">
-                    <p class="text-[10px] text-slate-500 font-bold">GIRTH</p>
-                    <p id="dash-girth" class="text-2xl font-black text-white italic">0.00 IN</p>
+
+                <div class="flex-1 biometric-container glass-card p-0 relative flex items-center justify-center overflow-hidden border-none shadow-[inset_0_0_80px_rgba(153,27,27,0.3)]">
+                    <div class="scan-animation"></div>
+                    
+                    <div class="floating-scan-card backdrop-blur-md">
+                        <p class="text-[9px] text-apex-red font-black mb-1 tracking-widest">LIVE_UPLINK_SCAN</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-white">EQ_STABILITY</span>
+                            <span class="text-[10px] text-green-500 font-bold">98%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
+                            <div class="bg-apex-red h-full w-3/4 animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <img src="image_d315e2.jpg" alt="Biometric Core" class="hologram-asset w-full h-full object-cover opacity-90 transition-opacity duration-500">
+                    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent"></div>
                 </div>
+
+                <div class="grid grid-cols-3 gap-4 mt-6">
+                    <div class="glass-card p-6 text-center border-b-4 border-slate-800 transition hover:border-apex-red">
+                        <p class="text-[10px] text-slate-500 mb-2 font-bold">STAMINA</p>
+                        <p class="text-2xl font-black text-white">24<span class="text-xs text-slate-500">MIN</span></p>
+                    </div>
+                    <div class="glass-card p-6 text-center border-b-4 border-slate-800 transition hover:border-apex-red">
+                        <p class="text-[10px] text-slate-500 mb-2 font-bold">HARDNESS</p>
+                        <p class="text-2xl font-black text-white">9<span class="text-xs text-slate-700">/10</span></p>
+                    </div>
+                    <div class="glass-card p-6 text-center border-b-4 border-apex-red bg-red-950/10">
+                        <p class="text-[10px] text-slate-500 mb-2 font-bold">SESSION</p>
+                        <p class="text-2xl font-black text-white italic">ACTV</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-7 grid grid-cols-2 gap-8 content-start">
+                
+                <div class="glass-card p-6 col-span-1 h-48">
+                    <p class="text-[11px] text-slate-500 mb-6 font-bold uppercase tracking-widest">STAMINA_LEVEL // TREND</p>
+                    <div class="h-24 w-full bg-slate-900/50 rounded flex items-end justify-between px-3 pb-2">
+                        <div class="w-2 bg-apex-red opacity-30 h-1/2"></div>
+                        <div class="w-2 bg-apex-red h-3/4"></div>
+                        <div class="w-2 bg-apex-red h-full"></div>
+                        <div class="w-2 bg-apex-red h-2/3"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 col-span-1 h-48 flex flex-col justify-between border-t-2 border-apex-red/30">
+                    <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">LIBIDO_INDEX</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-6xl font-black italic text-white drop-shadow-[0_0_15px_rgba(153,27,27,0.4)]">9</span>
+                        <span class="text-2xl font-bold text-slate-700">/10</span>
+                    </div>
+                </div>
+
+                <div class="col-span-2 glass-card p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h4 class="text-sm font-black tracking-widest">DAILY_PROTOCOL_RIBBON</h4>
+                        <span id="current-month-display" class="text-[12px] text-slate-500 font-bold">LOADING...</span>
+                    </div>
+                    
+                    <div id="calendar-days-container" class="flex gap-3 mb-8"></div>
+
+                    <div id="task-list" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="col-span-2 space-y-3">
+                    <p class="text-[11px] text-slate-500 mb-2 font-bold uppercase tracking-widest">ACTIVE_PROTOCOLS</p>
+                    <div class="glass-card p-5 flex justify-between items-center border-l-4 border-apex-red hover:bg-slate-800/20 transition cursor-pointer">
+                        <span class="text-sm font-black tracking-tight">GYM_UPLINK_V.04</span>
+                        <span class="text-[10px] bg-slate-800 px-3 py-1 rounded font-bold">STABLE</span>
+                    </div>
+                    <div class="glass-card p-5 flex justify-between items-center border-l-4 border-slate-800">
+                        <span class="text-sm font-black text-slate-600 tracking-tight">AI_ANALYSIS_SYNC</span>
+                        <span class="text-[10px] text-apex-red font-bold">OFFLINE</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
 
-   <script>
-// 1. Local State (No Database)
-let selectedFreq = 3;
+    <script>
+        // 1. DATA MATRIX
+        const userStats = {
+            stamina: 24,
+            hardness: 9,
+            goal: "MAX_STAMINA"
+        };
 
-// 2. Frequency Selection Logic
-function setFreq(val) {
-    selectedFreq = val;
-    document.querySelectorAll('.freq-btn').forEach(b => 
-        b.classList.remove('border-apex-red', 'bg-red-950/20')
-    );
-    const btn = document.getElementById(`f${val}`);
-    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
-}
+        const taskLibrary = [
+            { id: "PELVIC_FORCE", name: "THE_GYM // PELVIC_FORCE", req: "3 SETS X 50 REPS", minStamina: 0 },
+            { id: "ENDURANCE_UI", name: "PROTOCOL // ENDURANCE_ISO", req: "5 SETS X 20 REPS", minStamina: 20 },
+            { id: "RECOVERY", name: "REST // NEURAL_RECOVERY", req: "20 MIN MEDITATION", minStamina: 40 }
+        ];
 
-// 3. Navigation between Phase steps
-function nextWizStep(curr, next) {
-    const currentElem = document.getElementById(`step-${curr}`);
-    const nextElem = document.getElementById(`step-${next}`);
-    if (currentElem && nextElem) {
-        currentElem.classList.add('hidden');
-        nextElem.classList.remove('hidden');
-        document.getElementById('wiz-progress').style.width = (next * 25) + '%';
-    }
-}
+        // 2. CALENDAR ENGINE
+        function updateCalendar() {
+            const container = document.getElementById('calendar-days-container');
+            const monthDisplay = document.getElementById('current-month-display');
+            const now = new Date();
+            
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            monthDisplay.innerText = `${monthNames[now.getMonth()]}_${now.getFullYear()}`;
 
-// 4. Finalize UI (Just hides the overlay and updates the numbers on screen)
-function finalizeCalibration() {
-    const data = {
-        current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-        current_girth: parseFloat(document.getElementById('q-girth').value) || 0
-    };
+            container.innerHTML = ''; 
 
-    // Simply hide the popup and show the dashboard
-    document.getElementById('calibration-overlay').classList.add('hidden');
-    updateDashUI(data);
-}
+            for (let i = -1; i <= 1; i++) {
+                const date = new Date();
+                date.setDate(now.getDate() + i);
+                
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+                const dayNum = date.getDate();
+                const isToday = i === 0;
 
-// 5. Update the dashboard text
-function updateDashUI(data) {
-    const len = document.getElementById('dash-length');
-    const gir = document.getElementById('dash-girth');
-    if(len) len.innerText = `${data.current_bpel.toFixed(2)} IN`;
-    if(gir) gir.innerText = `${data.current_girth.toFixed(2)} IN`;
-}
+                const dayHTML = `
+                    <div class="flex-1 ${isToday ? 'bg-apex-red shadow-[0_0_20px_rgba(153,27,27,0.3)]' : 'bg-slate-900/50 border border-slate-800'} p-4 rounded-xl text-center transition-all duration-500">
+                        <p class="text-[10px] ${isToday ? 'text-white opacity-80' : 'text-slate-500'}">${dayName}</p>
+                        <p class="text-lg font-black ${isToday ? 'text-white' : 'text-slate-400'}">${dayNum}</p>
+                    </div>
+                `;
+                container.innerHTML += dayHTML;
+            }
+        }
 
-// Reset on refresh
-window.onload = () => {
-    console.log("SYSTEM_READY: LOCAL_MODE_ACTIVE");
-};
-</script>
+        // 3. PROTOCOL ENGINE
+        function updateProtocolEngine() {
+            const taskContainer = document.getElementById('task-list');
+            taskContainer.innerHTML = ''; 
+
+            const recommendedTasks = taskLibrary.filter(t => userStats.stamina >= t.minStamina);
+
+            recommendedTasks.forEach(task => {
+                taskContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition group">
+                        <div>
+                            <p class="text-sm font-black text-white group-hover:text-apex-red transition">${task.name}</p>
+                            <p class="text-[10px] text-slate-500 mt-2 tracking-widest">${task.req} REQUIRED</p>
+                        </div>
+                        <button onclick="executeTask('${task.id}')" class="bg-apex-red text-white text-[11px] font-black px-8 py-3 italic hover:bg-white hover:text-black transition rounded-lg">EXECUTE</button>
+                    </div>
+                `;
+            });
+        }
+
+        // 4. TASK EXECUTION
+        function executeTask(id) {
+            console.log("Executing Protocol ID:", id);
+            alert("PROTOCOL_" + id + "_INITIALIZED");
+        }
+
+        // INITIALIZE ALL SYSTEMS
+        window.onload = function() {
+            updateCalendar();
+            updateProtocolEngine();
+        };
+    </script>
 </body>
 </html>
