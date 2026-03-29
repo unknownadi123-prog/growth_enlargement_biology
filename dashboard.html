@@ -141,13 +141,12 @@
 let supabaseClient;
 
 function initSupabase() {
-    const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-    
-    // Ensure we use the window object to find the library
-    if (window.supabase) {
-        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-        console.log("SUPABASE_READY");
+// Ensure this is outside of any functions!
+const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
+const supabaseKey = 'YOUR_ACTUAL_PUBLIC_KEY_HERE';
+
+// Use 'window.supabase' to be 100% sure you're grabbing the library from the CDN
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     } else {
         console.error("SUPABASE_LIBRARY_MISSING");
     }
