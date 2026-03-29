@@ -27,41 +27,43 @@
         /* BIOMETRIC CORE STYLES */
         .biometric-container {
             position: relative;
-            background: radial-gradient(circle, rgba(153, 27, 27, 0.05) 0%, transparent 70%);
+            background: #000; /* Black base for better mix-blend */
             border-radius: 30px;
         }
 
         .hologram-asset {
             mix-blend-mode: lighten;
-            filter: contrast(1.1) brightness(1.1);
+            filter: contrast(1.2) brightness(1.1);
         }
 
         .floating-scan-card {
             position: absolute;
-            top: 20%;
-            right: 10%;
+            top: 15%;
+            right: 8%;
             width: 180px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid #991b1b;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(153, 27, 27, 0.5);
             padding: 12px;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(153, 27, 27, 0.2);
+            box-shadow: 0 0 30px rgba(153, 27, 27, 0.2);
             z-index: 10;
         }
 
         .scan-animation {
             width: 100%;
-            height: 2px;
+            height: 3px;
             background: linear-gradient(90deg, transparent, #991b1b, transparent);
             position: absolute;
-            animation: moveScan 3s ease-in-out infinite;
+            box-shadow: 0 0 15px #991b1b;
+            animation: moveScan 4s ease-in-out infinite;
             z-index: 5;
         }
 
         @keyframes moveScan {
-            0% { top: 10%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 90%; opacity: 0; }
+            0% { top: 5%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 95%; opacity: 0; }
         }
 
         .text-apex-red { color: #991b1b; }
@@ -119,26 +121,26 @@
                     </div>
                 </div>
 
-              <div class="flex-1 biometric-container glass-card p-0 relative flex items-center justify-center overflow-hidden border-none shadow-[inset_0_0_50px_rgba(153,27,27,0.2)]">
-    <div class="scan-animation"></div>
-    
-    <div class="floating-scan-card backdrop-blur-md">
-        <p class="text-[9px] text-apex-red font-black mb-1 tracking-widest">LIVE_UPLINK_SCAN</p>
-        <div class="flex items-center justify-between">
-            <span class="text-[10px] text-white">EQ_STABILITY</span>
-            <span class="text-[10px] text-green-500 font-bold">98%</span>
-        </div>
-        <div class="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
-            <div class="bg-apex-red h-full w-3/4 animate-pulse"></div>
-        </div>
-    </div>
+                <div class="flex-1 biometric-container glass-card p-0 relative flex items-center justify-center overflow-hidden border-none shadow-[inset_0_0_80px_rgba(153,27,27,0.3)]">
+                    <div class="scan-animation"></div>
+                    
+                    <div class="floating-scan-card backdrop-blur-md">
+                        <p class="text-[9px] text-apex-red font-black mb-1 tracking-widest">LIVE_UPLINK_SCAN</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-white">EQ_STABILITY</span>
+                            <span class="text-[10px] text-green-500 font-bold">98%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1 mt-2 rounded-full overflow-hidden">
+                            <div class="bg-apex-red h-full w-3/4 animate-pulse"></div>
+                        </div>
+                    </div>
 
-    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/image_d315e2.jpg" 
-         alt="Biometric Core" 
-         class="hologram-asset w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-500">
-         
-    <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#020617] to-transparent"></div>
-</div>
+                    <img src="image_d315e2.jpg" 
+                         alt="Biometric Core" 
+                         class="hologram-asset w-full h-full object-cover opacity-90 transition-opacity duration-500">
+                         
+                    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent"></div>
+                </div>
 
                 <div class="grid grid-cols-3 gap-4 mt-6">
                     <div class="glass-card p-6 text-center border-b-4 border-slate-800 transition hover:border-apex-red">
