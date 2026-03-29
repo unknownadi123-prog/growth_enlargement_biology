@@ -162,7 +162,26 @@ function initSupabase() {
 // Initialize immediately
 initSupabase();
 
-let selectedFreq = 3;
+<script>
+let supabaseClient;
+
+// ... (your initSupabase function) ...
+
+let selectedFreq = 3; // The default value
+
+// PASTE THE FUNCTION HERE
+function setFreq(val) {
+    selectedFreq = val; 
+    
+    // This part handles the red highlight so the user knows what they clicked
+    document.querySelectorAll('.freq-btn').forEach(b => 
+        b.classList.remove('border-apex-red', 'bg-red-950/20')
+    );
+    const btn = document.getElementById(`f${val}`);
+    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
+}
+
+// ... (the rest of your navigation and finalize functions) ...
 
 // 2. Navigation Logic
 function nextWizStep(curr, next) {
