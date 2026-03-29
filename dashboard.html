@@ -34,12 +34,8 @@
         .view-content { display: none; }
         .view-content.active { display: block; }
 
-        /* Custom range styling */
         input[type=range] { accent-color: #991b1b; }
-
-        /* Hide Scrollbar */
         ::-webkit-scrollbar { width: 0px; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -65,11 +61,10 @@
                 <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_02 // ACTIVITY</span>
                 <h2 class="text-2xl font-black text-white italic mt-2 mb-6">SEXUAL_FREQUENCY?</h2>
                 <div class="space-y-3">
-                    <button onclick="setFreq(1)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f1">1. 1-2 TIMES / MONTH <span class="text-[9px] block text-slate-500">LOW ACTIVITY</span></button>
-                    <button onclick="setFreq(2)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f2">2. 4-5 TIMES / MONTH <span class="text-[9px] block text-slate-500">CONSERVATIVE</span></button>
-                    <button onclick="setFreq(3)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f3">3. 2-4 TIMES / WEEK <span class="text-[9px] block text-slate-500">ACTIVE / STANDARD</span></button>
-                    <button onclick="setFreq(4)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f4">4. EVERYDAY <span class="text-[9px] block text-slate-500">HIGH FREQUENCY</span></button>
-                    <button onclick="setFreq(5)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f5">5. MULTIPLE TIMES / DAY <span class="text-[9px] block text-slate-500">OVERTRAINING RISK</span></button>
+                    <button onclick="setFreq(1)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f1">1. 1-2 TIMES / MONTH</button>
+                    <button onclick="setFreq(2)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f2">2. 4-5 TIMES / MONTH</button>
+                    <button onclick="setFreq(3)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f3">3. 2-4 TIMES / WEEK</button>
+                    <button onclick="setFreq(4)" class="w-full glass-card p-4 text-left hover:border-apex-red freq-btn" id="f4">4. EVERYDAY</button>
                 </div>
                 <button onclick="nextWizStep(2, 3)" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">NEXT_PHASE</button>
             </div>
@@ -80,17 +75,15 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-4">
                         <p class="text-[9px] text-slate-500">CURRENT_LENGTH (BPEL)</p>
-                        <input type="number" id="q-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white focus:border-apex-red outline-none">
+                        <input type="number" id="q-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
                         <p class="text-[9px] text-slate-500">CURRENT_GIRTH</p>
-                        <input type="number" id="q-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white focus:border-apex-red outline-none">
-                        <a href="#" class="text-[9px] text-blue-500 underline">HOW_TO_MEASURE?</a>
+                        <input type="number" id="q-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
                     </div>
                     <div class="space-y-4">
                         <p class="text-[9px] text-slate-500">TARGET_LENGTH</p>
-                        <input type="number" id="q-t-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white focus:border-apex-red outline-none">
+                        <input type="number" id="q-t-bpel" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
                         <p class="text-[9px] text-slate-500">TARGET_GIRTH</p>
-                        <input type="number" id="q-t-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white focus:border-apex-red outline-none">
-                        <a href="#" class="text-[9px] text-blue-500 underline">ANALYZE_PROPORTIONS</a>
+                        <input type="number" id="q-t-girth" step="0.1" placeholder="0.0 IN" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white outline-none">
                     </div>
                 </div>
                 <button onclick="nextWizStep(3, 4)" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">FINAL_STEPS</button>
@@ -101,19 +94,16 @@
                 <h2 class="text-2xl font-black text-white italic mt-2 mb-8">LIFESTYLE_FACTORS</h2>
                 <div class="space-y-6">
                     <div>
-                        <p class="text-[9px] text-slate-500 mb-2">Q8: AVG_SLEEP_HOURS (<span id="s-val">7</span>H)</p>
+                        <p class="text-[9px] text-slate-500 mb-2">AVG_SLEEP: <span id="s-val">7</span>H</p>
                         <input type="range" id="q-sleep" min="4" max="10" value="7" oninput="document.getElementById('s-val').innerText=this.value" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer">
                     </div>
-                    <div>
-                        <p class="text-[9px] text-slate-500 mb-2">Q9: ACTIVITY_LEVEL</p>
-                        <select id="q-activity" class="w-full bg-slate-900 border border-slate-700 p-4 rounded text-white focus:border-apex-red outline-none">
-                            <option value="1">SEDENTARY (DESK JOB)</option>
-                            <option value="2">ACTIVE (GYM 3X WEEK)</option>
-                            <option value="3">ATHLETE (ELITE TRAINING)</option>
-                        </select>
-                    </div>
+                    <select id="q-activity" class="w-full bg-slate-900 border border-slate-700 p-4 rounded text-white outline-none">
+                        <option value="1">SEDENTARY</option>
+                        <option value="2">ACTIVE</option>
+                        <option value="3">ATHLETE</option>
+                    </select>
                 </div>
-                <button onclick="finalizeCalibration()" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition shadow-[0_0_20px_rgba(153,27,27,0.4)]">INITIALIZE_SYSTEM</button>
+                <button onclick="finalizeCalibration()" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">INITIALIZE_SYSTEM</button>
             </div>
         </div>
     </div>
@@ -124,116 +114,101 @@
             <div onclick="switchView('dashboard')" class="p-2 text-white hover:bg-slate-800/50 rounded-lg cursor-pointer flex items-center gap-4 transition">
                 <span class="text-2xl">🖥️</span> <span class="group-hover:inline hidden text-[12px] font-bold">MISSION_CONTROL</span>
             </div>
-            <div onclick="switchView('analytics')" class="p-2 text-slate-500 hover:text-apex-red hover:bg-red-950/20 rounded-lg cursor-pointer flex items-center gap-4 transition">
-                <span class="text-2xl">🧬</span> <span class="group-hover:inline hidden text-[12px] font-bold">BIO_ANALYTICS</span>
-            </div>
         </nav>
     </aside>
 
     <main class="flex-1 flex flex-col p-8 relative overflow-y-auto">
-        <div id="view-dashboard" class="view-content active">
-             <header class="flex justify-between items-center mb-10">
-                <div class="flex flex-col">
-                    <span class="text-[12px] text-apex-red font-bold tracking-[0.3em]">COMMAND_PROTOCOL_ACTIVE</span>
-                    <h1 class="text-3xl font-black italic text-white leading-none">OPERATOR_<span id="op-name" class="text-apex-red">UNKNWN</span></h1>
-                </div>
-            </header>
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-black italic text-white leading-none">OPERATOR_<span class="text-apex-red">UNKNWN</span></h1>
+        </header>
 
-            <div class="grid grid-cols-12 gap-8">
-                <div class="col-span-5 flex flex-col space-y-6">
-                    <div class="flex gap-4">
-                        <div class="glass-card flex-1 p-5 border-l-4 border-apex-red">
-                            <p class="text-[10px] text-slate-500 font-bold">LENGTH (BPEL)</p>
-                            <p id="dash-length" class="text-2xl font-black text-white italic">0.00 <span class="text-[12px] text-slate-600">IN</span></p>
-                        </div>
-                        <div class="glass-card flex-1 p-5 border-l-4 border-apex-red">
-                            <p class="text-[10px] text-slate-500 font-bold">GIRTH (MID)</p>
-                            <p id="dash-girth" class="text-2xl font-black text-white italic">0.00 <span class="text-[12px] text-slate-600">IN</span></p>
-                        </div>
-                    </div>
+        <div id="view-dashboard" class="view-content active">
+            <div class="grid grid-cols-2 gap-4 max-w-md">
+                <div class="glass-card p-5 border-l-4 border-apex-red">
+                    <p class="text-[10px] text-slate-500 font-bold">LENGTH</p>
+                    <p id="dash-length" class="text-2xl font-black text-white italic">0.00 IN</p>
+                </div>
+                <div class="glass-card p-5 border-l-4 border-apex-red">
+                    <p class="text-[10px] text-slate-500 font-bold">GIRTH</p>
+                    <p id="dash-girth" class="text-2xl font-black text-white italic">0.00 IN</p>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-// 1. Rename the constant to 'supabaseClient' to avoid library conflicts
-const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        // INITIALIZE CLIENT
+        const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
+        const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Use the global 'supabase' object from the CDN to create your specific client
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        let selectedFreq = 3;
 
-// 2. Update your finalize function to use 'supabaseClient'
-async function finalizeCalibration() {
-    try {
-        // Get the current session user using the new client name
-        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-        
-        if (authError || !user) {
-            console.error("AUTH_ERROR:", authError);
-            alert("SESSION_EXPIRED: Please log in again.");
-            return;
+        // NAVIGATION
+        function nextWizStep(curr, next) {
+            document.getElementById(`step-${curr}`).classList.add('hidden');
+            document.getElementById(`step-${next}`).classList.remove('hidden');
+            document.getElementById('wiz-progress').style.width = (next * 25) + '%';
         }
 
-        const data = {
-            id: user.id, // Link to the auth user
-            age: parseInt(document.getElementById('q-age').value) || 0,
-            height: parseInt(document.getElementById('q-height').value) || 0,
-            weight: parseInt(document.getElementById('q-weight').value) || 0,
-            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: selectedFreq,
-            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
-            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
-            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
-            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
-            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
-            updated_at: new Date()
-        };
-
-        // Upsert data to the 'profiles' table
-        const { error: upsertError } = await supabaseClient
-            .from('profiles')
-            .upsert(data);
-
-        if (upsertError) throw upsertError;
-
-        // SUCCESS: Hide overlay and update dashboard UI
-        document.getElementById('calibration-overlay').classList.add('hidden');
-        updateDashUI(data);
-        console.log("SYSTEM_INITIALIZED: Biometrics synced to cloud.");
-
-    } catch (err) {
-        console.error("INITIALIZATION_FAILED:", err);
-        alert("UPLINK_FAILURE: " + err.message);
-    }
-}
-
-// 3. Also update your window.onload to use 'supabaseClient'
-window.onload = async () => {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (user) {
-        const { data: profile } = await supabaseClient
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-        
-        if (profile) {
-            document.getElementById('calibration-overlay').classList.add('hidden');
-            updateDashUI(profile);
+        function setFreq(val) {
+            selectedFreq = val;
+            document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
+            const btn = document.getElementById(`f${val}`);
+            if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
         }
-    }
-};
+
+        function updateDashUI(data) {
+            document.getElementById('dash-length').innerText = `${data.current_bpel || 0.00} IN`;
+            document.getElementById('dash-girth').innerText = `${data.current_girth || 0.00} IN`;
+        }
+
+        // SAVE DATA
+        async function finalizeCalibration() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    alert("AUTH_REQUIRED: Please log in.");
+                    return;
                 }
+
+                const payload = {
+                    id: user.id,
+                    age: parseInt(document.getElementById('q-age').value) || 0,
+                    height: parseInt(document.getElementById('q-height').value) || 0,
+                    current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+                    current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
+                    sexual_frequency: selectedFreq,
+                    updated_at: new Date()
+                };
+
+                const { error } = await supabaseClient.from('profiles').upsert(payload);
+                if (error) throw error;
+
+                document.getElementById('calibration-overlay').classList.add('hidden');
+                updateDashUI(payload);
+
+            } catch (err) {
+                alert("ERROR: " + err.message);
             }
-        };
+        }
 
         function switchView(viewId) {
             document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
         }
+
+        // CHECK ON LOAD
+        window.onload = async () => {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+                if (profile) {
+                    document.getElementById('calibration-overlay').classList.add('hidden');
+                    updateDashUI(profile);
+                }
+            }
+        };
     </script>
 </body>
 </html>
