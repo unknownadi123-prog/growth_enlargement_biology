@@ -16,203 +16,74 @@
             overflow: hidden;
         }
 
-        .sidebar-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 3px solid transparent;
-        }
+        /* UI Accents */
+        .sidebar-item { transition: all 0.2s ease; border-left: 4px solid transparent; }
+        .sidebar-active { background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, transparent 100%); border-left-color: #ff0000; color: #ff0000; }
+        .glass-card { background: rgba(10, 10, 10, 0.9); border: 1px solid #1a1a1a; position: relative; overflow: hidden; }
+        .stat-glow { text-shadow: 0 0 15px rgba(255, 0, 0, 0.6); }
+        .progress-bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #ff0000; box-shadow: 0 0 10px #ff0000; transition: width 1s ease-in-out; }
 
-        .sidebar-item:hover, .sidebar-active {
-            background: linear-gradient(90deg, rgba(255,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
-            border-left: 3px solid #ff0000;
-            color: #ff0000;
-        }
-
-        .glass-card {
-            background: rgba(15, 15, 15, 0.8);
-            border: 1px solid #222;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-glow {
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: #111;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #ff0000;
-            box-shadow: 0 0 10px #ff0000;
-        }
+        /* Ghost Mode Overlay */
+        #ghostLayer { background: white; display: none; position: fixed; inset: 0; z-index: 9999; color: #333; padding: 20px; font-family: sans-serif; }
 
         /* Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 2;
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
+        .crt::after {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 5; background-size: 100% 3px, 3px 100%; pointer-events: none;
         }
     </style>
 </head>
-<body class="flex h-screen">
+<body class="flex h-screen crt">
 
-    <aside class="w-64 bg-[#050505] border-r border-[#111] flex flex-col z-10">
+    <div id="ghostLayer">
+        <p>Project_Notes_2026.docx - Microsoft Word</p>
+        <hr>
+        <p>Reviewing the structural requirements for the upcoming design presentation...</p>
+    </div>
+
+    <aside class="w-64 bg-[#050505] border-r border-[#111] flex flex-col z-20">
         <div class="p-8">
-            <h1 class="text-2xl font-extrabold tracking-tighter text-red-600">APEX_LABS</h1>
-            <p class="text-[9px] text-gray-600 tracking-[0.3em]">VERSION_2.0.4</p>
+            <h1 class="text-2xl font-extrabold tracking-tighter text-red-600 italic">APEX_LABS</h1>
+            <p class="text-[8px] text-gray-600 tracking-[0.4em] font-bold">STATUS: OPERATIONAL</p>
         </div>
 
-        <nav class="flex-1 px-4 space-y-2">
+        <nav class="flex-1 px-3 space-y-1">
             <div class="sidebar-item sidebar-active p-4 flex items-center gap-4 cursor-pointer">
-                <span class="text-xs uppercase font-bold tracking-widest">01_Dashboard</span>
+                <span class="text-[10px] uppercase font-bold tracking-widest">Dashboard</span>
             </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
-                <span class="text-xs uppercase font-bold tracking-widest">02_The_Vault</span>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
+                <span class="text-[10px] uppercase font-bold tracking-widest">The_Vault</span>
             </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
-                <span class="text-xs uppercase font-bold tracking-widest">03_The_Gym</span>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
+                <span class="text-[10px] uppercase font-bold tracking-widest">The_Gym</span>
             </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
-                <span class="text-xs uppercase font-bold tracking-widest">04_Simulation</span>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
+                <span class="text-[10px] uppercase font-bold tracking-widest">Simulation</span>
             </div>
         </nav>
 
         <div class="p-6">
-            <div class="bg-red-950/20 border border-red-900/50 p-4 rounded-lg">
-                <p class="text-[10px] text-red-500 font-bold mb-2">PRO_ANALYST_LOCKED</p>
-                <button class="w-full bg-red-600 text-[10px] font-black py-2 rounded uppercase">Upgrade_Now</button>
+            <div class="bg-red-950/10 border border-red-900/30 p-4 rounded-sm">
+                <p class="text-[9px] text-red-500 font-bold mb-3 tracking-tighter italic">AI_ANALYST_LOCKED</p>
+                <button class="w-full bg-red-600 text-black text-[9px] font-black py-2 hover:bg-white transition uppercase">Upgrade_Account</button>
             </div>
+            <button onclick="logout()" class="w-full mt-4 text-[9px] text-gray-700 hover:text-red-600 transition font-bold uppercase tracking-widest">Disconnect_Session</button>
         </div>
     </aside>
 
-    <main class="flex-1 p-10 overflow-y-auto z-10">
+    <main class="flex-1 p-10 overflow-y-auto z-10 bg-[#000000]">
         
-        <header class="flex justify-between items-start mb-10">
+        <header class="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
             <div>
-                <h2 class="text-xs text-red-600 font-black tracking-[0.5em] uppercase mb-1">Status: Operational</h2>
-                <h3 class="text-4xl font-extrabold uppercase italic tracking-tighter">Welcome, Operator_<span id="userName">...</span></h3>
+                <h3 class="text-xs text-red-600 font-bold tracking-[0.5em] uppercase mb-1">Subject_Command_Center</h3>
+                <h2 class="text-4xl font-black uppercase italic tracking-tighter">Welcome, Operator_<span id="userName" class="text-red-600">...</span></h2>
             </div>
-            <button onclick="logout()" class="text-[10px] border border-gray-800 px-4 py-2 hover:bg-white hover:text-black transition uppercase font-bold">Disconnect</button>
+            <div class="text-right">
+                <div class="text-[9px] text-gray-600 uppercase tracking-widest">Last_Sync</div>
+                <div id="lastSync" class="text-[10px] font-bold text-green-500 uppercase">Awaiting_Uplink...</div>
+            </div>
         </header>
 
-        <div class="grid grid-cols-12 gap-6">
-            
-            <div class="col-span-4 space-y-6">
-                <div class="glass-card p-6">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center font-black text-2xl italic">A</div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Current_Rank</p>
-                            <h4 class="text-lg font-bold uppercase">Apex_Subject</h4>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-[10px] mb-1 uppercase text-gray-400"><span>Build_Progress</span><span>75%</span></div>
-                            <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-6">
-                    <h4 class="text-[10px] font-black text-red-600 tracking-widest uppercase mb-6">Build_Sync</h4>
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-center">
-                            <p class="text-xs text-gray-500 uppercase">Length</p>
-                            <div class="text-right">
-                                <span class="text-xl font-black italic mr-1" id="curLength">--.-</span>
-                                <span class="text-[9px] text-gray-600">/ 8.0</span>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="text-xs text-gray-500 uppercase">Girth</p>
-                            <div class="text-right">
-                                <span class="text-xl font-black italic mr-1" id="curGirth">--.-</span>
-                                <span class="text-[9px] text-gray-600">/ 5.5</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-span-8 space-y-6">
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="glass-card p-4 text-center">
-                        <p class="text-[9px] text-gray-500 uppercase mb-2">Stamina_Level</p>
-                        <p class="text-2xl font-black text-red-600 stat-glow">-- min</p>
-                    </div>
-                    <div class="glass-card p-4 text-center">
-                        <p class="text-[9px] text-gray-500 uppercase mb-2">Libido_Index</p>
-                        <p class="text-2xl font-black text-white">8/10</p>
-                    </div>
-                    <div class="glass-card p-4 text-center">
-                        <p class="text-[9px] text-gray-500 uppercase mb-2">EQ_Rating</p>
-                        <p class="text-2xl font-black text-white" id="curEQ">--</p>
-                    </div>
-                </div>
-
-                <div class="glass-card p-8">
-                    <h4 class="text-[10px] font-black text-white tracking-widest uppercase mb-8 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-red-600 animate-ping"></span> Daily_Protocols
-                    </h4>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-white/5 border-l-2 border-red-600">
-                            <div>
-                                <p class="text-xs font-bold uppercase">The_Gym // Pelvic_Friction</p>
-                                <p class="text-[10px] text-gray-500">Daily 100x Reps Required</p>
-                            </div>
-                            <button class="text-[9px] font-black uppercase bg-red-600 px-4 py-2 italic">Start_</button>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-white/5 border-l-2 border-gray-800">
-                            <div>
-                                <p class="text-xs font-bold uppercase text-gray-400">The_Vault // Metric_Sync</p>
-                                <p class="text-[10px] text-gray-600">Pending Log Entry</p>
-                            </div>
-                            <button class="text-[9px] font-black uppercase border border-gray-800 px-4 py-2 italic">Open_</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <script>
-        // Supabase Init
-        const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-        const SB_KEY = 'YOUR_KEY_HERE'; // Add your key
-        const apex = supabase.createClient(SB_URL, SB_KEY);
-
-        window.onload = async () => {
-            const { data: { user } } = await apex.auth.getUser();
-            if (!user) window.location.href = 'login.html';
-            document.getElementById('userName').innerText = user.email.split('@')[0];
-            loadData(user.id);
-        };
-
-        async function loadData(uid) {
-            const { data } = await apex.from('performance_logs')
-                .select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(1);
-            if (data && data[0]) {
-                document.getElementById('curLength').innerText = data[0].length_bpel;
-                document.getElementById('curGirth').innerText = data[0].girth_mid;
-                document.getElementById('curEQ').innerText = data[0].eq_score;
-            }
-        }
-
-        async function logout() {
-            await apex.auth.signOut();
-            window.location.href = 'login.html';
-        }
-    </script>
-</body>
-</html>
+        <div class="grid grid-cols-12 gap-8">
