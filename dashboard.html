@@ -137,53 +137,33 @@
     </main>
 
     <script>
-      <script>
-// 1. Declare globally at the very top
-let supabaseClient;
+     <script>
+// THE FIX: Use the name 'supabase' globally so lines 196 and 216 can see it
+let supabase; 
 
 function initSupabase() {
     const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-    // MAKE SURE TO PUT YOUR ACTUAL KEY HERE
-    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe'; 
+    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
 
-    try {
-        if (window.supabase) {
-            // Assign to the GLOBAL variable, not a new const
-            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-            console.log("UPLINK_ESTABLISHED");
-        } else {
-            console.error("SUPABASE_LIBRARY_MISSING");
-        }
-    } catch (err) {
-        console.error("INIT_ERROR:", err);
+    if (window.supabase) {
+        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        console.log("APEX_SYSTEM: ONLINE");
+    } else {
+        console.error("APEX_SYSTEM: OFFLINE - Library Missing");
     }
 }
 
-// Initialize immediately
 initSupabase();
 
-<script>
-let supabaseClient;
+let selectedFreq = 3;
 
-// ... (your initSupabase function) ...
-
-let selectedFreq = 3; // The default value
-
-// PASTE THE FUNCTION HERE
 function setFreq(val) {
-    selectedFreq = val; 
-    
-    // This part handles the red highlight so the user knows what they clicked
-    document.querySelectorAll('.freq-btn').forEach(b => 
-        b.classList.remove('border-apex-red', 'bg-red-950/20')
-    );
+    selectedFreq = val;
+    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
     const btn = document.getElementById(`f${val}`);
     if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
 }
 
-// ... (the rest of your navigation and finalize functions) ...
-
-// 2. Navigation Logic
 function nextWizStep(curr, next) {
     const currentElem = document.getElementById(`step-${curr}`);
     const nextElem = document.getElementById(`step-${next}`);
@@ -194,80 +174,58 @@ function nextWizStep(curr, next) {
     }
 }
 
-function setFreq(val) {
-    selectedFreq = val;
-    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
-    const btn = document.getElementById(`f${val}`);
-    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
-}
-
-// 3. The Core Function Fix
 async function finalizeCalibration() {
-    if (!supabaseClient) {
-        alert("SYSTEM_OFFLINE: Connection to Supabase failed.");
-        return;
-    }
+    if (!supabase) return alert("Connection Error: Refresh Page");
 
     try {
-        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-        
-        if (authError || !user) {
-            alert("AUTH_REQUIRED: Please ensure you are logged in.");
-            return;
-        }
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) return alert("Please log in first.");
 
+        // Ensure all values are numbers (integers or floats) to match database
         const payload = {
             id: user.id,
             age: parseInt(document.getElementById('q-age').value) || 0,
             height: parseInt(document.getElementById('q-height').value) || 0,
             weight: parseInt(document.getElementById('q-weight').value) || 0,
             body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: parseInt(selectedFreq) || 3,
+            sexual_frequency: parseInt(selectedFreq),
             current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
             current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
             target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
             target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
             sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
             activity_level: parseInt(document.getElementById('q-activity').value) || 1,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
         };
 
-        const { error } = await supabaseClient.from('profiles').upsert(payload);
+        const { error } = await supabase.from('profiles').upsert(payload);
         if (error) throw error;
 
         document.getElementById('calibration-overlay').classList.add('hidden');
         updateDashUI(payload);
 
     } catch (err) {
-        console.error("DATA_UPLINK_ERROR:", err);
-        alert("UPLINK_FAILURE: " + err.message);
+        alert("Sync Failed: " + err.message);
     }
 }
 
 function updateDashUI(data) {
-    const len = document.getElementById('dash-length');
-    const gir = document.getElementById('dash-girth');
-    if(len) len.innerText = `${data.current_bpel || 0.00} IN`;
-    if(gir) gir.innerText = `${data.current_girth || 0.00} IN`;
+    document.getElementById('dash-length').innerText = (data.current_bpel || 0).toFixed(2) + " IN";
+    document.getElementById('dash-girth').innerText = (data.current_girth || 0).toFixed(2) + " IN";
 }
 
-// 4. Load check
 window.onload = async () => {
-    // Wait a tiny bit to ensure initSupabase finished
-    setTimeout(async () => {
-        if (supabaseClient) {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
-                if (profile) {
-                    document.getElementById('calibration-overlay').classList.add('hidden');
-                    updateDashUI(profile);
-                }
+    if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+            if (profile) {
+                document.getElementById('calibration-overlay').classList.add('hidden');
+                updateDashUI(profile);
             }
         }
-    }, 100);
+    }
 };
 </script>
-    </script>
 </body>
 </html>
