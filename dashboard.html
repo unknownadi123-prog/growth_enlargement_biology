@@ -190,26 +190,76 @@
                     </div>
                 </div>
 
-                <div class="col-span-2 glass-card p-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <h4 class="text-sm font-black tracking-widest">DAILY_PROTOCOL_RIBBON</h4>
-                        <span class="text-[12px] text-slate-500 font-bold">MAR_2026</span>
-                    </div>
-                    
-                    <div class="flex gap-3 mb-8">
-                        <div class="flex-1 bg-apex-red p-4 rounded-xl text-center shadow-[0_0_20px_rgba(153,27,27,0.3)]">
-                            <p class="text-[10px] text-white opacity-80">MON</p>
-                            <p class="text-lg font-black text-white">29</p>
-                        </div>
-                        <div class="flex-1 bg-slate-900/50 p-4 rounded-xl text-center border border-slate-800">
-                            <p class="text-[10px] text-slate-500">TUE</p>
-                            <p class="text-lg font-black">30</p>
-                        </div>
-                        <div class="flex-1 bg-slate-900/50 p-4 rounded-xl text-center border border-slate-800">
-                            <p class="text-[10px] text-slate-500">WED</p>
-                            <p class="text-lg font-black">31</p>
-                        </div>
-                    </div>
+               <div class="col-span-2 glass-card p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h4 class="text-sm font-black tracking-widest">DAILY_PROTOCOL_RIBBON</h4>
+        <span id="current-month-display" class="text-[12px] text-slate-500 font-bold">LOADING...</span>
+    </div>
+    
+    <div id="calendar-days-container" class="flex gap-3 mb-8"></div>
+
+    <div class="space-y-4">
+        <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition">
+            <div>
+                <p class="text-sm font-black text-white">THE_GYM // PELVIC_FORCE</p>
+                <p id="protocol-status" class="text-[10px] text-slate-500 mt-2 tracking-widest">STATUS: AWAITING_EXECUTION</p>
+            </div>
+            <button onclick="executeProtocol()" id="execute-btn" class="bg-apex-red text-white text-[11px] font-black px-8 py-3 italic hover:bg-white hover:text-black transition rounded-lg">EXECUTE</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateCalendar() {
+        const container = document.getElementById('calendar-days-container');
+        const monthDisplay = document.getElementById('current-month-display');
+        const now = new Date();
+        
+        // Set Header (e.g., MAR_2026)
+        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        monthDisplay.innerText = `${monthNames[now.getMonth()]}_${now.getFullYear()}`;
+
+        container.innerHTML = ''; // Clear static data
+
+        // Generate 3 days: Yesterday, Today, Tomorrow
+        for (let i = -1; i <= 1; i++) {
+            const date = new Date();
+            date.setDate(now.getDate() + i);
+            
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+            const dayNum = date.getDate();
+            const isToday = i === 0;
+
+            const dayHTML = `
+                <div class="flex-1 ${isToday ? 'bg-apex-red shadow-[0_0_20px_rgba(153,27,27,0.3)]' : 'bg-slate-900/50 border border-slate-800'} p-4 rounded-xl text-center transition-all duration-500">
+                    <p class="text-[10px] ${isToday ? 'text-white opacity-80' : 'text-slate-500'}">${dayName}</p>
+                    <p class="text-lg font-black ${isToday ? 'text-white' : 'text-slate-400'}">${dayNum}</p>
+                </div>
+            `;
+            container.innerHTML += dayHTML;
+        }
+    }
+
+    function executeProtocol() {
+        const btn = document.getElementById('execute-btn');
+        const status = document.getElementById('protocol-status');
+        
+        btn.innerText = "INITIALIZING...";
+        btn.classList.add('animate-pulse');
+        
+        setTimeout(() => {
+            btn.innerText = "COMPLETED";
+            btn.style.backgroundColor = "#22c55e"; // Green
+            btn.classList.remove('animate-pulse');
+            status.innerText = "STATUS: SESSION_LOGGED_SUCCESSFULLY";
+            status.classList.replace('text-slate-500', 'text-green-500');
+        }, 2000);
+    }
+
+    // Run on load
+    updateCalendar();
+</script>
+                
 
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition">
