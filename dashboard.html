@@ -203,7 +203,7 @@ async function finalizeCalibration() {
             height: parseInt(document.getElementById('q-height').value) || 0,
             weight: parseInt(document.getElementById('q-weight').value) || 0,
             body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: selectedFreq,
+            sexual_frequency: parseInt(selectedFreq) || 3,
             current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
             current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
             target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
