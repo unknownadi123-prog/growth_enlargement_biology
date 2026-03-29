@@ -137,78 +137,110 @@
     </main>
 
     <script>
-        // INITIALIZE CLIENT
-        const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-        const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+       // 1. Declare globally at the very top of the script
+let supabaseClient;
 
-        let selectedFreq = 3;
+function initSupabase() {
+    const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
+    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+    
+    // Ensure we use the window object to find the library
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        console.log("SUPABASE_READY");
+    } else {
+        console.error("SUPABASE_LIBRARY_MISSING");
+    }
+}
 
-        // NAVIGATION
-        function nextWizStep(curr, next) {
-            document.getElementById(`step-${curr}`).classList.add('hidden');
-            document.getElementById(`step-${next}`).classList.remove('hidden');
-            document.getElementById('wiz-progress').style.width = (next * 25) + '%';
+// Initialize immediately
+initSupabase();
+
+let selectedFreq = 3;
+
+// 2. Navigation Logic
+function nextWizStep(curr, next) {
+    const currentElem = document.getElementById(`step-${curr}`);
+    const nextElem = document.getElementById(`step-${next}`);
+    if (currentElem && nextElem) {
+        currentElem.classList.add('hidden');
+        nextElem.classList.remove('hidden');
+        document.getElementById('wiz-progress').style.width = (next * 25) + '%';
+    }
+}
+
+function setFreq(val) {
+    selectedFreq = val;
+    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
+    const btn = document.getElementById(`f${val}`);
+    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
+}
+
+// 3. The Core Function Fix
+async function finalizeCalibration() {
+    // Check if client exists before running
+    if (!supabaseClient) {
+        console.error("CRITICAL: supabaseClient is undefined.");
+        alert("SYSTEM_OFFLINE: Please refresh the page.");
+        return;
+    }
+
+    try {
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+        
+        if (authError || !user) {
+            alert("AUTH_REQUIRED: Please ensure you are logged in.");
+            return;
         }
 
-        function setFreq(val) {
-            selectedFreq = val;
-            document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
-            const btn = document.getElementById(`f${val}`);
-            if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
-        }
-
-        function updateDashUI(data) {
-            document.getElementById('dash-length').innerText = `${data.current_bpel || 0.00} IN`;
-            document.getElementById('dash-girth').innerText = `${data.current_girth || 0.00} IN`;
-        }
-
-        // SAVE DATA
-        async function finalizeCalibration() {
-            try {
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                if (!user) {
-                    alert("AUTH_REQUIRED: Please log in.");
-                    return;
-                }
-
-                const payload = {
-                    id: user.id,
-                    age: parseInt(document.getElementById('q-age').value) || 0,
-                    height: parseInt(document.getElementById('q-height').value) || 0,
-                    current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-                    current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
-                    sexual_frequency: selectedFreq,
-                    updated_at: new Date()
-                };
-
-                const { error } = await supabaseClient.from('profiles').upsert(payload);
-                if (error) throw error;
-
-                document.getElementById('calibration-overlay').classList.add('hidden');
-                updateDashUI(payload);
-
-            } catch (err) {
-                alert("ERROR: " + err.message);
-            }
-        }
-
-        function switchView(viewId) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-        }
-
-        // CHECK ON LOAD
-        window.onload = async () => {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
-                if (profile) {
-                    document.getElementById('calibration-overlay').classList.add('hidden');
-                    updateDashUI(profile);
-                }
-            }
+        const payload = {
+            id: user.id,
+            age: parseInt(document.getElementById('q-age').value) || 0,
+            height: parseInt(document.getElementById('q-height').value) || 0,
+            weight: parseInt(document.getElementById('q-weight').value) || 0,
+            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
+            sexual_frequency: selectedFreq,
+            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
+            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
+            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
+            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
+            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
+            updated_at: new Date()
         };
+
+        const { error } = await supabaseClient.from('profiles').upsert(payload);
+        if (error) throw error;
+
+        document.getElementById('calibration-overlay').classList.add('hidden');
+        updateDashUI(payload);
+
+    } catch (err) {
+        console.error("DATA_UPLINK_ERROR:", err);
+        alert("UPLINK_FAILURE: " + err.message);
+    }
+}
+
+function updateDashUI(data) {
+    const len = document.getElementById('dash-length');
+    const gir = document.getElementById('dash-girth');
+    if(len) len.innerText = `${data.current_bpel || 0.00} IN`;
+    if(gir) gir.innerText = `${data.current_girth || 0.00} IN`;
+}
+
+// 4. Load check
+window.onload = async () => {
+    if (supabaseClient) {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+            if (profile) {
+                document.getElementById('calibration-overlay').classList.add('hidden');
+                updateDashUI(profile);
+            }
+        }
+    }
+};
     </script>
 </body>
 </html>
