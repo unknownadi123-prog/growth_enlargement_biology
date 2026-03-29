@@ -190,7 +190,7 @@
                     </div>
                 </div>
 
-               <div class="col-span-2 glass-card p-8">
+             <div class="col-span-2 glass-card p-8">
     <div class="flex justify-between items-center mb-8">
         <h4 class="text-sm font-black tracking-widest">DAILY_PROTOCOL_RIBBON</h4>
         <span id="current-month-display" class="text-[12px] text-slate-500 font-bold">LOADING...</span>
@@ -198,16 +198,54 @@
     
     <div id="calendar-days-container" class="flex gap-3 mb-8"></div>
 
-    <div class="space-y-4">
-        <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition">
-            <div>
-                <p class="text-sm font-black text-white">THE_GYM // PELVIC_FORCE</p>
-                <p id="protocol-status" class="text-[10px] text-slate-500 mt-2 tracking-widest">STATUS: AWAITING_EXECUTION</p>
-            </div>
-            <button onclick="executeProtocol()" id="execute-btn" class="bg-apex-red text-white text-[11px] font-black px-8 py-3 italic hover:bg-white hover:text-black transition rounded-lg">EXECUTE</button>
+    <div id="task-list" class="space-y-4">
         </div>
-    </div>
 </div>
+
+<script>
+    // 1. DATA MATRIX: This is where goals and performance live
+    const userStats = {
+        stamina: 24, // Ref: STAMINA card
+        hardness: 9,  // Ref: HARDNESS card
+        goal: "MAX_STAMINA"
+    };
+
+    const taskLibrary = [
+        { id: "PELVIC_FORCE", name: "THE_GYM // PELVIC_FORCE", req: "3 SETS X 50 REPS", minStamina: 0 },
+        { id: "ENDURANCE_UI", name: "PROTOCOL // ENDURANCE_ISO", req: "5 SETS X 20 REPS", minStamina: 20 },
+        { id: "RECOVERY", name: "REST // NEURAL_RECOVERY", req: "20 MIN MEDITATION", minStamina: 40 }
+    ];
+
+    function updateProtocolEngine() {
+        const taskContainer = document.getElementById('task-list');
+        taskContainer.innerHTML = ''; // Clear old tasks
+
+        // 2. LOGIC ENGINE: Filter tasks based on performance
+        // If stamina is low, give a specific strength task; if high, give endurance.
+        const recommendedTasks = taskLibrary.filter(t => userStats.stamina >= t.minStamina);
+
+        recommendedTasks.forEach(task => {
+            taskContainer.innerHTML += `
+                <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition group">
+                    <div>
+                        <p class="text-sm font-black text-white group-hover:text-apex-red transition">${task.name}</p>
+                        <p class="text-[10px] text-slate-500 mt-2 tracking-widest">${task.req} REQUIRED</p>
+                    </div>
+                    <button onclick="executeTask('${task.id}')" class="bg-apex-red text-white text-[11px] font-black px-8 py-3 italic hover:bg-white hover:text-black transition rounded-lg">EXECUTE</button>
+                </div>
+            `;
+        });
+    }
+
+    function executeTask(id) {
+        console.log("Executing Protocol ID:", id);
+        alert("PROTOCOL_" + id + "_INITIALIZED");
+    }
+
+    // Initialize both Calendar and Task Engine
+    updateCalendar(); // From previous step
+    updateProtocolEngine();
+</script>
 
 <script>
     function updateCalendar() {
@@ -261,16 +299,7 @@
 </script>
                 
 
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-6 bg-slate-900/40 rounded-2xl border border-slate-800 hover:border-apex-red/50 transition">
-                            <div>
-                                <p class="text-sm font-black text-white">THE_GYM // PELVIC_FORCE</p>
-                                <p class="text-[10px] text-slate-500 mt-2 tracking-widest">3 SETS X 50 REPS REQUIRED</p>
-                            </div>
-                            <button class="bg-apex-red text-white text-[11px] font-black px-8 py-3 italic hover:bg-white hover:text-black transition rounded-lg">EXECUTE</button>
-                        </div>
-                    </div>
-                </div>
+        
 
             </div>
         </div>
