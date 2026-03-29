@@ -138,21 +138,29 @@
 
     <script>
      <script>
-// THE FIX: Use the name 'supabase' globally so lines 196 and 216 can see it
+<script>
+// 1. GLOBAL VARIABLE - Must be named 'supabase' to match your function calls
 let supabase; 
 
 function initSupabase() {
+    // Replace these with your actual credentials from the Supabase Dashboard
     const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
     const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
 
-    if (window.supabase) {
-        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        console.log("APEX_SYSTEM: ONLINE");
-    } else {
-        console.error("APEX_SYSTEM: OFFLINE - Library Missing");
+    try {
+        if (window.supabase) {
+            // Assigning to the global variable
+            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            console.log("APEX_SYSTEM: ONLINE");
+        } else {
+            console.error("APEX_SYSTEM: LIBRARY_MISSING (Check CDN link)");
+        }
+    } catch (err) {
+        console.error("INIT_ERROR:", err);
     }
 }
 
+// Initialize immediately so the 'supabase' object exists for all other functions
 initSupabase();
 
 let selectedFreq = 3;
@@ -175,56 +183,79 @@ function nextWizStep(curr, next) {
 }
 
 async function finalizeCalibration() {
-    if (!supabase) return alert("Connection Error: Refresh Page");
+    // Critical check: Stop if supabase didn't load
+    if (!supabase) {
+        alert("CRITICAL_ERROR: Supabase connection failed. Check your internet or CDN.");
+        return;
+    }
 
     try {
+        // Correcting the structure to match Supabase v2
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError || !user) return alert("Please log in first.");
+        
+        if (authError || !user) {
+            alert("AUTH_REQUIRED: You must be logged in to save your profile.");
+            return;
+        }
 
-        // Ensure all values are numbers (integers or floats) to match database
+        // Data cleanup: ensure numbers are numbers, not strings
         const payload = {
-    id: user.id,
-    age: parseInt(document.getElementById('q-age').value) || 0,
-    height: parseInt(document.getElementById('q-height').value) || 0,
-    weight: parseInt(document.getElementById('q-weight').value) || 0,
-    body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-    sexual_frequency: parseInt(selectedFreq), // This now matches the SQL column
-    current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-    current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
-    target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
-    target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
-    sleep_quality: parseInt(document.getElementById('q-sleep').value) || 7,
-    activity_level: parseInt(document.getElementById('q-activity').value) || 1,
-    updated_at: new Date().toISOString()
-};
-        const { error } = await supabase.from('profiles').upsert(payload);
-        if (error) throw error;
+            id: user.id,
+            age: parseInt(document.getElementById('q-age').value) || 0,
+            height: parseInt(document.getElementById('q-height').value) || 0,
+            weight: parseInt(document.getElementById('q-weight').value) || 0,
+            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
+            sexual_frequency: parseInt(selectedFreq),
+            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
+            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
+            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
+            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
+            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
+            updated_at: new Date().toISOString()
+        };
 
+        const { error } = await supabase.from('profiles').upsert(payload);
+        
+        if (error) {
+            console.error("UPSERT_ERROR:", error.message);
+            alert("UPLINK_FAILED: " + error.message);
+            return;
+        }
+
+        // Success: Hide overlay and update dashboard
         document.getElementById('calibration-overlay').classList.add('hidden');
         updateDashUI(payload);
 
     } catch (err) {
-        alert("Sync Failed: " + err.message);
+        console.error("UNEXPECTED_CRASH:", err);
     }
 }
 
 function updateDashUI(data) {
-    document.getElementById('dash-length').innerText = (data.current_bpel || 0).toFixed(2) + " IN";
-    document.getElementById('dash-girth').innerText = (data.current_girth || 0).toFixed(2) + " IN";
+    const len = document.getElementById('dash-length');
+    const gir = document.getElementById('dash-girth');
+    if(len) len.innerText = `${(data.current_bpel || 0).toFixed(2)} IN`;
+    if(gir) gir.innerText = `${(data.current_girth || 0).toFixed(2)} IN`;
 }
 
+// 4. Auto-load profile if user is already logged in
 window.onload = async () => {
-    if (supabase) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-            if (profile) {
-                document.getElementById('calibration-overlay').classList.add('hidden');
-                updateDashUI(profile);
+    // Wait slightly to ensure CDN library and initSupabase are finished
+    setTimeout(async () => {
+        if (supabase) {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                if (profile) {
+                    document.getElementById('calibration-overlay').classList.add('hidden');
+                    updateDashUI(profile);
+                }
             }
         }
-    }
+    }, 200);
 };
+</script>
 </script>
 </body>
 </html>
