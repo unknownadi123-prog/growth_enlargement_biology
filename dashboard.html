@@ -3,87 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APEX LABS // MISSION CONTROL</title>
+    <title>Apex Labs // Mission Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
         
         body { 
-            background-color: #000000; 
-            color: #ffffff; 
+            background-color: #020617; 
+            color: #e2e8f0; 
             font-family: 'JetBrains Mono', monospace;
             overflow: hidden;
+            text-transform: uppercase;
         }
 
-        /* UI Accents */
-        .sidebar-item { transition: all 0.2s ease; border-left: 4px solid transparent; }
-        .sidebar-active { background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, transparent 100%); border-left-color: #ff0000; color: #ff0000; }
-        .glass-card { background: rgba(10, 10, 10, 0.9); border: 1px solid #1a1a1a; position: relative; overflow: hidden; }
-        .stat-glow { text-shadow: 0 0 15px rgba(255, 0, 0, 0.6); }
-        .progress-bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #ff0000; box-shadow: 0 0 10px #ff0000; transition: width 1s ease-in-out; }
+        /* The "Login Page" Aesthetics */
+        .sidebar-item { transition: all 0.2s ease; border-left: 3px solid transparent; }
+        .sidebar-active { background: rgba(153, 27, 27, 0.1); border-left-color: #991b1b; color: #fff; }
+        
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid #1e293b; 
+            backdrop-filter: blur(8px);
+        }
+
+        .progress-bar { height: 4px; background: #0f172a; overflow: hidden; }
+        .progress-fill { height: 100%; background: #991b1b; transition: width 1s ease; }
 
         /* Ghost Mode Overlay */
-        #ghostLayer { background: white; display: none; position: fixed; inset: 0; z-index: 9999; color: #333; padding: 20px; font-family: sans-serif; }
+        #ghostLayer { background: white; display: none; position: fixed; inset: 0; z-index: 9999; color: #333; padding: 20px; font-family: sans-serif; text-transform: none; }
 
-        /* Scanline Effect */
-        .crt::after {
+        /* Scanline Overlay (From your index page) */
+        .form-scanlines::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 5; background-size: 100% 3px, 3px 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(153, 27, 27, 0.02), rgba(30, 41, 59, 0.02));
+            z-index: 5; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.3;
         }
     </style>
 </head>
-<body class="flex h-screen crt">
+<body class="flex h-screen form-scanlines">
 
     <div id="ghostLayer">
-        <p>Project_Notes_2026.docx - Microsoft Word</p>
+        <p>Project_Requirements_v.04.xlsx - Microsoft Excel</p>
         <hr>
-        <p>Reviewing the structural requirements for the upcoming design presentation...</p>
+        <p>Analyzing structural design data for prototype development...</p>
     </div>
 
-    <aside class="w-64 bg-[#050505] border-r border-[#111] flex flex-col z-20">
-        <div class="p-8">
-            <h1 class="text-2xl font-extrabold tracking-tighter text-red-600 italic">APEX_LABS</h1>
-            <p class="text-[8px] text-gray-600 tracking-[0.4em] font-bold">STATUS: OPERATIONAL</p>
+    <aside class="w-64 bg-[#020617] border-r border-slate-800 flex flex-col z-20">
+        <div class="p-8 border-b border-slate-800/50">
+            <h1 class="text-xl font-black italic tracking-tighter text-white">Apex Labs</h1>
+            <p class="text-[8px] text-slate-500 tracking-[0.4em] font-bold">Core // Uplink</p>
         </div>
 
-        <nav class="flex-1 px-3 space-y-1">
+        <nav class="flex-1 px-3 mt-6 space-y-1">
             <div class="sidebar-item sidebar-active p-4 flex items-center gap-4 cursor-pointer">
-                <span class="text-[10px] uppercase font-bold tracking-widest">Dashboard</span>
-            </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
-                <span class="text-[10px] uppercase font-bold tracking-widest">The_Vault</span>
-            </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
-                <span class="text-[10px] uppercase font-bold tracking-widest">The_Gym</span>
-            </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500 hover:text-white">
-                <span class="text-[10px] uppercase font-bold tracking-widest">Simulation</span>
-            </div>
-        </nav>
-
-        <div class="p-6">
-            <div class="bg-red-950/10 border border-red-900/30 p-4 rounded-sm">
-                <p class="text-[9px] text-red-500 font-bold mb-3 tracking-tighter italic">AI_ANALYST_LOCKED</p>
-                <button class="w-full bg-red-600 text-black text-[9px] font-black py-2 hover:bg-white transition uppercase">Upgrade_Account</button>
-            </div>
-            <button onclick="logout()" class="w-full mt-4 text-[9px] text-gray-700 hover:text-red-600 transition font-bold uppercase tracking-widest">Disconnect_Session</button>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-10 overflow-y-auto z-10 bg-[#000000]">
-        
-        <header class="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
-            <div>
-                <h3 class="text-xs text-red-600 font-bold tracking-[0.5em] uppercase mb-1">Subject_Command_Center</h3>
-                <h2 class="text-4xl font-black uppercase italic tracking-tighter">Welcome, Operator_<span id="userName" class="text-red-600">...</span></h2>
-            </div>
-            <div class="text-right">
-                <div class="text-[9px] text-gray-600 uppercase tracking-widest">Last_Sync</div>
-                <div id="lastSync" class="text-[10px] font-bold text-green-500 uppercase">Awaiting_Uplink...</div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-12 gap-8">
+                <span class="text-[10px] font-bold tracking-widest">01_Mission_Control</span>
