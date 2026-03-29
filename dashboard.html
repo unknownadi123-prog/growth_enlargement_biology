@@ -5,183 +5,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APEX LABS // MISSION CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
         
         body { 
-            background-color: #020617; /* Legacy Login Deep Navy */
+            background-color: #020617; /* Deep Navy */
             color: #cbd5e1; 
             font-family: 'JetBrains Mono', monospace;
-            overflow: hidden;
+            overflow-x: hidden;
             text-transform: uppercase;
         }
 
-        /* Sidebar Styling (Do Not Change) */
-        .sidebar-item { transition: all 0.2s ease; border-left: 4px solid transparent; }
-        .sidebar-active { background: linear-gradient(90deg, rgba(153, 27, 27, 0.2) 0%, transparent 100%); border-left-color: #991b1b; color: #ffffff; }
-
-        /* CLINICAL GRID LAYOUT (HomeCare inspired) */
+        /* Glassmorphism Cards */
         .glass-card { 
-            background: rgba(15, 23, 42, 0.6); /* Translucent Blue-Gray */
-            border: 1px solid #1e293b; /* Legacy Login Slate Border */
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            overflow: hidden;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid #1e293b;
+            border-radius: 24px; /* Rounded corners from reference */
+            backdrop-filter: blur(10px);
         }
 
-        .stat-glow { text-shadow: 0 0 15px rgba(153, 27, 27, 0.6); color: #ffffff; }
-        .progress-bar { height: 4px; background: #0f172a; border: 1px solid #1e293b; border-radius: 4px; }
-        .progress-fill { height: 100%; background: #991b1b; box-shadow: 0 0 10px #991b1b; }
+        /* Red Accents */
+        .text-apex-red { color: #991b1b; }
+        .bg-apex-red { background-color: #991b1b; }
+        .border-apex-red { border-color: #991b1b; }
 
-        /* Specialized Scanlines for Main Content */
-        .content-scanlines::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
-            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.1;
-        }
+        /* Hidden Sidebar Logic */
+        .sidebar { width: 60px; transition: width 0.3s; overflow: hidden; white-space: nowrap; }
+        .sidebar:hover { width: 240px; }
 
-        /* Abstract Sexual Vitality Engine */
-        #vitalityEngine::after {
-            content: " "; display: block; position: absolute; top: 50%; left: 50%; width: 150px; height: 150px;
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(153, 27, 27, 1) 0%, rgba(153, 27, 27, 0) 70%);
-            animation: pulse 4s infinite;
-            pointer-events: none; opacity: 0.5; z-index: -1;
+        /* Scanline Effect */
+        .scanline {
+            width: 100%; height: 2px; background: rgba(153, 27, 27, 0.1);
+            position: absolute; animation: scan 4s linear infinite;
         }
-        @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 0.7; } 100% { opacity: 0.2; } }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
     </style>
 </head>
-<body class="flex h-screen content-scanlines">
+<body class="flex h-screen">
 
-    <aside class="w-64 bg-[#020617] border-r border-slate-800 flex flex-col z-20">
-        <div class="p-8 border-b border-slate-800/50">
-            <h1 class="text-2xl font-black italic tracking-tighter text-white">APEX_LABS</h1>
-            <p class="text-[8px] text-red-800 tracking-[0.4em] font-black">CORE_UPLINK_v.04</p>
-        </div>
-
-        <nav class="flex-1 px-3 mt-6 space-y-1">
-            <div class="sidebar-item sidebar-active p-4 flex items-center gap-4 cursor-pointer">
-                <span class="text-[10px] font-black tracking-[0.2em]">01_COMMAND</span>
+    <aside class="sidebar bg-[#020617] border-r border-slate-800 flex flex-col z-50 group">
+        <div class="p-4 mb-10"><div class="w-8 h-8 bg-apex-red rounded-sm"></div></div>
+        <nav class="flex-1 px-3 space-y-4">
+            <div class="p-2 text-slate-500 hover:text-white cursor-pointer flex items-center gap-4">
+                <span class="text-lg">⚙️</span> <span class="group-hover:inline hidden text-[10px]">OPERATOR_SETTINGS</span>
             </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-slate-500 hover:text-white">
-                <span class="text-[10px] font-black tracking-[0.2em]">02_VAULT</span>
-            </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-slate-500 hover:text-white">
-                <span class="text-[10px] font-black tracking-[0.2em]">03_GYM</span>
-            </div>
-            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-slate-500 hover:text-white">
-                <span class="text-[10px] font-black tracking-[0.2em]">04_SIM</span>
+            <div class="p-2 text-slate-500 hover:text-white cursor-pointer flex items-center gap-4">
+                <span class="text-lg">👤</span> <span class="group-hover:inline hidden text-[10px]">ID: STATION_045</span>
             </div>
         </nav>
-
-        <div class="p-6 border-t border-slate-800/50">
-            <div class="border border-red-900/30 bg-slate-900/50 p-4 rounded-sm">
-                <p class="text-[8px] text-red-600 font-black mb-3 tracking-widest">AI_ANALYST_OFFLINE</p>
-                <button class="w-full bg-red-800 text-white text-[9px] font-black py-2 hover:bg-white hover:text-black transition">UPGRADE_PROTOCOL</button>
-            </div>
-            <button onclick="logout()" class="w-full mt-4 text-[9px] text-slate-600 hover:text-red-600 transition font-black tracking-widest">DISCONNECT_</button>
-        </div>
     </aside>
 
-    <main class="flex-1 p-8 overflow-y-auto z-10 bg-[#020617]">
-        
-        <header class="flex justify-between items-start mb-8 border-b border-slate-800 pb-6">
-            <div>
-                <h3 class="text-xs text-red-600 font-black tracking-[0.5em] mb-1">COMMAND_PROTOCOL_ACTIVE</h3>
-                <h2 class="text-4xl font-black text-white italic tracking-tighter">OPERATOR_<span id="userName" class="text-red-700">OPERATOR_</span></h2>
-                <p class="text-[10px] text-slate-500 tracking-widest mt-1">UPLINK_STATION: STATION_045</p>
+    <main class="flex-1 flex flex-col p-6 relative overflow-y-auto">
+        <div class="scanline"></div>
+
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-apex-red font-bold tracking-[0.3em]">COMMAND_PROTOCOL_ACTIVE</span>
+                <h1 class="text-2xl font-black italic text-white leading-none">OPERATOR_<span class="text-apex-red">OPERATOR</span></h1>
             </div>
+            
+            <nav class="bg-slate-900/50 border border-slate-800 rounded-full px-6 py-2 flex gap-8">
+                <a href="#" class="text-[10px] font-bold text-white border-b border-apex-red">01_COMMAND</a>
+                <a href="#" class="text-[10px] font-bold text-slate-500 hover:text-white">02_VAULT</a>
+                <a href="#" class="text-[10px] font-bold text-slate-500 hover:text-white">03_GYM</a>
+                <a href="#" class="text-[10px] font-bold text-slate-500 hover:text-white">04_SIM</a>
+            </nav>
+
             <div class="text-right">
-                <div class="text-[9px] text-slate-500 tracking-widest mb-1">Sync_Status</div>
-                <div id="lastSync" class="text-[10px] font-black text-blue-500 animate-pulse">Sync_Active</div>
+                <span class="text-[9px] text-slate-500 block">UPLINK_STATION</span>
+                <span class="text-[10px] font-bold text-blue-500 animate-pulse">SYNC_ACTIVE // STATION_045</span>
             </div>
         </header>
 
-        <div class="grid grid-cols-12 gap-6">
+        <div class="grid grid-cols-12 gap-6 flex-1">
             
-            <div class="col-span-4 relative glass-card p-6 flex flex-col items-center justify-center text-center">
-                <h4 class="text-[10px] font-black text-red-700 tracking-[0.4em] mb-8 absolute top-6 left-6">Vitality_Engine</h4>
-                
-                <div id="vitalityEngine" class="relative w-40 h-40 mt-10">
-                    <svg viewBox="0 0 100 100" class="w-full h-full fill-none">
-                        <path d="M50 10 A40 40 0 1 1 50 90 A40 40 0 1 1 50 10 M30 50 A20 20 0 1 1 70 50 A20 20 0 1 1 30 50" stroke="#1e293b" stroke-width="1"/>
-                        <circle cx="50" cy="50" r="5" class="fill-red-800"/>
-                        <circle cx="50" cy="50" r="4" class="fill-white"/>
-                    </svg>
-                </div>
-                
-                <p class="text-[9px] text-slate-500 mt-6 tracking-widest">Active Session Pulse</p>
-                <p class="text-xs text-red-600 font-black italic tracking-tighter mt-1">98 BPM (Biometric Pulse Monitor)</p>
-            </div>
-
-            <div class="col-span-8 grid grid-cols-2 gap-6">
-                
-                <div class="glass-card p-6 flex flex-col justify-between">
-                    <p class="text-[9px] text-slate-500 tracking-widest">Average Stamina Level</p>
-                    <div class="flex items-end gap-2 mt-3">
-                        <span class="text-4xl font-black text-white italic stat-glow">24</span>
-                        <span class="text-sm font-bold text-slate-700">MINS</span>
+            <div class="col-span-5 flex flex-col">
+                <div class="flex gap-4 mb-4">
+                    <div class="glass-card flex-1 p-4 border-l-4 border-apex-red">
+                        <p class="text-[8px] text-slate-500">LENGTH (BPEL)</p>
+                        <p class="text-xl font-black text-white italic">--.-- <span class="text-[10px] text-slate-600">IN</span></p>
+                    </div>
+                    <div class="glass-card flex-1 p-4 border-l-4 border-apex-red">
+                        <p class="text-[8px] text-slate-500">GIRTH (MID)</p>
+                        <p class="text-xl font-black text-white italic">--.-- <span class="text-[10px] text-slate-600">IN</span></p>
                     </div>
                 </div>
+
+                <div class="flex-1 relative flex items-center justify-center py-6">
+                    <img src="image_d315e2.jpg" alt="Biometric Core" class="max-h-[400px] object-contain mix-blend-lighten opacity-80">
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mt-4">
+                    <div class="glass-card p-3 text-center border-b-2 border-slate-800">
+                        <p class="text-[7px] text-slate-500 mb-1">CURR_LENGTH</p>
+                        <p class="text-xs font-bold text-white">8.2"</p>
+                        <p class="text-[8px] text-apex-red mt-1">PHASE_01</p>
+                    </div>
+                    <div class="glass-card p-3 text-center border-b-2 border-slate-800">
+                        <p class="text-[7px] text-slate-500 mb-1">CURR_GIRTH</p>
+                        <p class="text-xs font-bold text-white">5.8"</p>
+                        <p class="text-[8px] text-apex-red mt-1">PHASE_02</p>
+                    </div>
+                    <div class="glass-card p-3 text-center border-b-2 border-apex-red">
+                        <p class="text-[7px] text-slate-500 mb-1">EQ_SCORE</p>
+                        <p class="text-xs font-bold text-white">9/10</p>
+                        <p class="text-[8px] text-apex-red mt-1">PHASE_03</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-7 grid grid-cols-2 gap-6 content-start">
                 
-                <div class="glass-card p-6 flex flex-col justify-between text-right border-t border-red-900/30">
-                    <p class="text-[9px] text-slate-500 tracking-widest">Libido Index // Current</p>
-                    <div class="flex items-end justify-end gap-2 mt-3">
-                        <span class="text-4xl font-black text-red-700 italic stat-glow">9</span>
-                        <span class="text-lg font-black text-slate-800">/10</span>
+                <div class="glass-card p-5 col-span-1 h-40">
+                    <p class="text-[9px] text-slate-500 mb-4">STAMINA_LEVEL // WEEKLY</p>
+                    <div class="h-20 w-full bg-slate-900/50 rounded flex items-end justify-between px-2 pb-1">
+                        <div class="w-1 bg-apex-red opacity-30 h-1/2"></div>
+                        <div class="w-1 bg-apex-red h-3/4"></div>
+                        <div class="w-1 bg-apex-red h-full"></div>
+                        <div class="w-1 bg-apex-red h-2/3"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 col-span-1 h-40 flex flex-col justify-between border-t border-apex-red/30">
+                    <p class="text-[9px] text-slate-500">LIBIDO_INDEX</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-5xl font-black italic text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">9</span>
+                        <span class="text-xl font-bold text-slate-700">/10</span>
+                    </div>
+                </div>
+
+                <div class="col-span-2 space-y-2">
+                    <p class="text-[9px] text-slate-500 mb-2">ACTIVE_LAB_PROTOCOLS</p>
+                    <div class="glass-card p-4 flex justify-between items-center border-l-2 border-apex-red">
+                        <span class="text-xs font-bold">EDGING_SESSION_GAME</span>
+                        <span class="text-[8px] bg-slate-800 px-2 py-1 rounded">V.04_READY</span>
+                    </div>
+                    <div class="glass-card p-4 flex justify-between items-center border-l-2 border-slate-800">
+                        <span class="text-xs font-bold text-slate-500">AI_ASSISTANT_UPLINK</span>
+                        <span class="text-[8px] text-apex-red">OFFLINE</span>
                     </div>
                 </div>
 
                 <div class="col-span-2 glass-card p-6">
-                    <h4 class="text-[9px] font-black text-white tracking-[0.4em] mb-6Phase_01_Core">Active_Daily_Protocols</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-slate-900/30 border-l-2 border-red-800">
-                            <div>
-                                <p class="text-xs font-black tracking-tight text-white">THE_GYM // PELVIC_FORCE</p>
-                                <p class="text-[8px] text-slate-500 mt-1 uppercase">Daily Repetition Cycle Required</p>
-                            </div>
-                            <button class="text-[9px] font-black bg-red-800 text-white px-6 py-2 italic hover:bg-white hover:text-black transition">EXECUTE</button>
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-xs font-bold">DAILY_PROTOCOL_RIBBON</h4>
+                        <span class="text-[10px] text-slate-500">MAR_2026</span>
+                    </div>
+                    
+                    <div class="flex gap-2 mb-6">
+                        <div class="flex-1 bg-apex-red p-2 rounded-lg text-center">
+                            <p class="text-[8px] text-white">MON</p>
+                            <p class="text-xs font-bold text-white">29</p>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-slate-900/20 border-l-2 border-slate-800">
+                        <div class="flex-1 bg-slate-900/50 p-2 rounded-lg text-center border border-slate-800">
+                            <p class="text-[8px] text-slate-500">TUE</p>
+                            <p class="text-xs font-bold">30</p>
+                        </div>
+                        <div class="flex-1 bg-slate-900/50 p-2 rounded-lg text-center border border-slate-800">
+                            <p class="text-[8px] text-slate-500">WED</p>
+                            <p class="text-xs font-bold">31</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-slate-900/40 rounded-xl border border-slate-800">
                             <div>
-                                <p class="text-xs font-black tracking-tight text-slate-600 uppercase">The_Vault // Metric_Verification</p>
-                                <p class="text-[8px] text-slate-700 mt-1">Weekly_Log Entry Required</p>
+                                <p class="text-xs font-bold text-white">THE_GYM // KEGEL_FORCE</p>
+                                <p class="text-[8px] text-slate-500 mt-1 uppercase">12:30 PM // 50 REPS REQUIRED</p>
                             </div>
-                            <button class="text-[9px] font-black border border-slate-800 px-6 py-2 italic text-slate-700 cursor-not-allowed">LOCKED</button>
+                            <button class="bg-apex-red text-white text-[9px] font-black px-4 py-2 italic hover:bg-white hover:text-black transition rounded">EXECUTE</button>
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </main>
-
-    <script>
-        const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-        const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-        const apex = supabase.createClient(SB_URL, SB_KEY);
-
-        window.onload = async () => {
-            const { data: { session }, error } = await apex.auth.getSession();
-            if (error || !session) {
-                window.location.href = 'login.html';
-                return;
-            }
-            const user = session.user;
-            document.getElementById('userName').innerText = user.email.split('@')[0].toUpperCase();
-            loadSubjectData(user.id);
-        };
-
-        async function loadSubjectData(uid) {
-            // Future placeholder to load stats
-        }
-
-        async function logout() {
-            await apex.auth.signOut();
-            window.location.href = 'login.html';
-        }
-    </script>
 </body>
 </html>
