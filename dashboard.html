@@ -137,18 +137,25 @@
     </main>
 
     <script>
-       // 1. Declare globally at the very top of the script
+      <script>
+// 1. Declare globally at the very top
 let supabaseClient;
 
 function initSupabase() {
-// Ensure this is outside of any functions!
-const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-const supabaseKey = 'YOUR_ACTUAL_PUBLIC_KEY_HERE';
+    const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
+    // MAKE SURE TO PUT YOUR ACTUAL KEY HERE
+    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe'; 
 
-// Use 'window.supabase' to be 100% sure you're grabbing the library from the CDN
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    } else {
-        console.error("SUPABASE_LIBRARY_MISSING");
+    try {
+        if (window.supabase) {
+            // Assign to the GLOBAL variable, not a new const
+            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+            console.log("UPLINK_ESTABLISHED");
+        } else {
+            console.error("SUPABASE_LIBRARY_MISSING");
+        }
+    } catch (err) {
+        console.error("INIT_ERROR:", err);
     }
 }
 
@@ -177,10 +184,8 @@ function setFreq(val) {
 
 // 3. The Core Function Fix
 async function finalizeCalibration() {
-    // Check if client exists before running
     if (!supabaseClient) {
-        console.error("CRITICAL: supabaseClient is undefined.");
-        alert("SYSTEM_OFFLINE: Please refresh the page.");
+        alert("SYSTEM_OFFLINE: Connection to Supabase failed.");
         return;
     }
 
@@ -229,17 +234,21 @@ function updateDashUI(data) {
 
 // 4. Load check
 window.onload = async () => {
-    if (supabaseClient) {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-            const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
-            if (profile) {
-                document.getElementById('calibration-overlay').classList.add('hidden');
-                updateDashUI(profile);
+    // Wait a tiny bit to ensure initSupabase finished
+    setTimeout(async () => {
+        if (supabaseClient) {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+                if (profile) {
+                    document.getElementById('calibration-overlay').classList.add('hidden');
+                    updateDashUI(profile);
+                }
             }
         }
-    }
+    }, 100);
 };
+</script>
     </script>
 </body>
 </html>
