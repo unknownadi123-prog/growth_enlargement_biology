@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APEX LABS // MISSION CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
         
@@ -138,98 +137,53 @@
     </main>
 
    <script>
-// 1. DECLARE GLOBAL VARIABLE
-var supabase; 
-
-// 2. INITIALIZE IMMEDIATELY
-(function init() {
-    const url = 'https://upfmksjiyptnckjauaut.supabase.co';
-    const key = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-    
-    if (window.supabase) {
-        supabase = window.supabase.createClient(url, key);
-        console.log("APEX_STATUS: LINK_ESTABLISHED");
-    } else {
-        console.error("APEX_STATUS: CDN_FAILURE - Library not loaded");
-    }
-})();
-
-// 3. SELECTION LOGIC
+// 1. Local State (No Database)
 let selectedFreq = 3;
+
+// 2. Frequency Selection Logic
 function setFreq(val) {
     selectedFreq = val;
-    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
-    const btn = document.getElementById('f' + val);
-    if (btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
+    document.querySelectorAll('.freq-btn').forEach(b => 
+        b.classList.remove('border-apex-red', 'bg-red-950/20')
+    );
+    const btn = document.getElementById(`f${val}`);
+    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
 }
 
-// 4. NAVIGATION
+// 3. Navigation between Phase steps
 function nextWizStep(curr, next) {
-    document.getElementById('step-' + curr).classList.add('hidden');
-    document.getElementById('step-' + next).classList.remove('hidden');
-    document.getElementById('wiz-progress').style.width = (next * 25) + '%';
-}
-
-// 5. THE CORE UPLINK (FIXED LINE 196)
-async function finalizeCalibration() {
-    if (!supabase) return alert("SYSTEM_OFFLINE: Refresh the page.");
-
-    try {
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        
-        if (authError || !user) {
-            alert("ACCESS_DENIED: Please log in first.");
-            return;
-        }
-
-        const payload = {
-            id: user.id,
-            age: parseInt(document.getElementById('q-age').value) || 0,
-            height: parseInt(document.getElementById('q-height').value) || 0,
-            weight: parseInt(document.getElementById('q-weight').value) || 0,
-            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: selectedFreq,
-            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
-            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
-            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
-            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
-            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
-            updated_at: new Date().toISOString()
-        };
-
-        const { error } = await supabase.from('profiles').upsert(payload);
-        if (error) throw error;
-
-        document.getElementById('calibration-overlay').classList.add('hidden');
-        updateDashUI(payload);
-
-    } catch (err) {
-        console.error("UPLINK_ERROR:", err.message);
-        alert("SYNC_FAILED: " + err.message);
+    const currentElem = document.getElementById(`step-${curr}`);
+    const nextElem = document.getElementById(`step-${next}`);
+    if (currentElem && nextElem) {
+        currentElem.classList.add('hidden');
+        nextElem.classList.remove('hidden');
+        document.getElementById('wiz-progress').style.width = (next * 25) + '%';
     }
 }
 
-function updateDashUI(data) {
-    document.getElementById('dash-length').innerText = (data.current_bpel || 0).toFixed(2) + " IN";
-    document.getElementById('dash-girth').innerText = (data.current_girth || 0).toFixed(2) + " IN";
+// 4. Finalize UI (Just hides the overlay and updates the numbers on screen)
+function finalizeCalibration() {
+    const data = {
+        current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+        current_girth: parseFloat(document.getElementById('q-girth').value) || 0
+    };
+
+    // Simply hide the popup and show the dashboard
+    document.getElementById('calibration-overlay').classList.add('hidden');
+    updateDashUI(data);
 }
 
-// 6. AUTO-LOAD (FIXED LINE 216)
-window.onload = async () => {
-    // Small delay to ensure init finished
-    setTimeout(async () => {
-        if (supabase) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-                if (profile) {
-                    document.getElementById('calibration-overlay').classList.add('hidden');
-                    updateDashUI(profile);
-                }
-            }
-        }
-    }, 300);
+// 5. Update the dashboard text
+function updateDashUI(data) {
+    const len = document.getElementById('dash-length');
+    const gir = document.getElementById('dash-girth');
+    if(len) len.innerText = `${data.current_bpel.toFixed(2)} IN`;
+    if(gir) gir.innerText = `${data.current_girth.toFixed(2)} IN`;
+}
+
+// Reset on refresh
+window.onload = () => {
+    console.log("SYSTEM_READY: LOCAL_MODE_ACTIVE");
 };
 </script>
 </body>
