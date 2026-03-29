@@ -157,87 +157,60 @@
     </main>
 
     <script>
-      // USE A DIFFERENT NAME FOR THE CLIENT TO AVOID CONFLICTS
+// 1. Rename the constant to 'supabaseClient' to avoid library conflicts
 const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
 const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+
+// Use the global 'supabase' object from the CDN to create your specific client
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-let selectedFreq = 3;
-
-function nextWizStep(curr, next) {
-    // VALIDATION: Prevent moving forward if Phase 1 is empty
-    if (curr === 1) {
-        const age = document.getElementById('q-age').value;
-        const height = document.getElementById('q-height').value;
-        if (!age || !height) {
-            alert("VITAL_SIGNS_REQUIRED: PLEASE ENTER AGE AND HEIGHT");
-            return;
-        }
-    }
-
-    const currentElem = document.getElementById(`step-${curr}`);
-    const nextElem = document.getElementById(`step-${next}`);
-
-    if (currentElem && nextElem) {
-        currentElem.classList.add('hidden');
-        nextElem.classList.remove('hidden');
-        document.getElementById('wiz-progress').style.width = (next * 25) + '%';
-        console.log(`UPLINK: PHASE_${next}_INITIALIZED`);
-    }
-}
-
-function setFreq(val) {
-    selectedFreq = val;
-    document.querySelectorAll('.freq-btn').forEach(b => {
-        b.classList.remove('border-apex-red', 'bg-red-950/20');
-    });
-    document.getElementById(`f${val}`).classList.add('border-apex-red', 'bg-red-950/20');
-}
-
+// 2. Update your finalize function to use 'supabaseClient'
 async function finalizeCalibration() {
     try {
-        const data = {
-            age: parseInt(document.getElementById('q-age').value),
-            height: parseInt(document.getElementById('q-height').value),
-            weight: parseInt(document.getElementById('q-weight').value),
-            body_fat: parseInt(document.getElementById('q-fat').value),
-            sexual_frequency: selectedFreq,
-            current_bpel: parseFloat(document.getElementById('q-bpel').value),
-            current_girth: parseFloat(document.getElementById('q-girth').value),
-            target_bpel: parseFloat(document.getElementById('q-t-bpel').value),
-            target_girth: parseFloat(document.getElementById('q-t-girth').value),
-            sleep_quality: parseInt(document.getElementById('q-sleep').value),
-            activity_level: parseInt(document.getElementById('q-activity').value)
-        };
-
-        const { data: { user } } = await supabaseClient.auth.getUser();
+        // Get the current session user using the new client name
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
         
-        if (!user) {
-            alert("AUTH_ERROR: NO ACTIVE SESSION FOUND");
+        if (authError || !user) {
+            console.error("AUTH_ERROR:", authError);
+            alert("SESSION_EXPIRED: Please log in again.");
             return;
         }
 
-        const { error } = await supabaseClient
+        const data = {
+            id: user.id, // Link to the auth user
+            age: parseInt(document.getElementById('q-age').value) || 0,
+            height: parseInt(document.getElementById('q-height').value) || 0,
+            weight: parseInt(document.getElementById('q-weight').value) || 0,
+            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
+            sexual_frequency: selectedFreq,
+            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
+            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
+            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
+            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
+            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
+            updated_at: new Date()
+        };
+
+        // Upsert data to the 'profiles' table
+        const { error: upsertError } = await supabaseClient
             .from('profiles')
-            .upsert({ id: user.id, ...data });
+            .upsert(data);
 
-        if (error) throw error;
+        if (upsertError) throw upsertError;
 
-        updateDashUI(data);
+        // SUCCESS: Hide overlay and update dashboard UI
         document.getElementById('calibration-overlay').classList.add('hidden');
-        
+        updateDashUI(data);
+        console.log("SYSTEM_INITIALIZED: Biometrics synced to cloud.");
+
     } catch (err) {
-        console.error("CRITICAL_UPLINK_FAILURE:", err);
-        alert("ERROR: " + err.message);
+        console.error("INITIALIZATION_FAILED:", err);
+        alert("UPLINK_FAILURE: " + err.message);
     }
 }
 
-function updateDashUI(data) {
-    if(!data) return;
-    document.getElementById('dash-length').innerHTML = `${data.current_bpel || 0} <span class="text-[12px] text-slate-600">IN</span>`;
-    document.getElementById('dash-girth').innerHTML = `${data.current_girth || 0} <span class="text-[12px] text-slate-600">IN</span>`;
-}
-
+// 3. Also update your window.onload to use 'supabaseClient'
 window.onload = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
