@@ -2,147 +2,151 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Apex Labs // Core Biometrics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Labs // Mission Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background-color: #020617; color: #f1f5f9; font-family: 'Monaco', monospace; }
+        .glow-border { border: 1px solid rgba(220, 38, 38, 0.3); box-shadow: 0 0 15px rgba(220, 38, 38, 0.1); }
+        .gaming-card { background: rgba(15, 23, 42, 0.8); backdrop-blur: 10px; border: 1px solid #1e293b; transition: all 0.3s; }
+        .gaming-card:hover { border-color: #dc2626; transform: translateY(-2px); }
+        .scanline { width: 100%; height: 2px; background: rgba(220, 38, 38, 0.1); position: absolute; animation: scan 4s linear infinite; }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
+    </style>
 </head>
-<body class="bg-[#020617] text-slate-100 font-mono uppercase tracking-tight">
+<body class="min-h-screen flex overflow-hidden">
 
-    <nav class="border-b border-slate-800 p-4 flex justify-between items-center bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="flex items-center gap-4">
-            <h1 class="text-[10px] text-slate-500 tracking-[0.3em]">STATION_ID: LYS4OQ45 // <span class="text-blue-500">OPERATOR_ACTIVE</span></h1>
-        </div>
-        <div class="flex items-center gap-6">
-            <div id="sync-status" class="text-[10px] text-yellow-500 animate-pulse">● STANDBY</div>
-            <button onclick="logout()" class="text-[10px] border border-red-900/50 px-3 py-1 text-red-500 hover:bg-red-900 hover:text-white transition">KILL_SESSION</button>
+    <div id="ghostMode" class="fixed inset-0 bg-white z-[999] hidden flex items-center justify-center">
+        <h1 class="text-slate-300 font-sans text-2xl">Project_Documentation_v2.xlsx - Excel</h1>
+    </div>
+
+    <nav class="w-20 md:w-64 border-r border-slate-800 flex flex-col p-6 space-y-8 bg-black/50">
+        <div class="text-red-600 font-black tracking-tighter text-xl mb-10">APEX_LABS</div>
+        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">01_THE_VAULT</button>
+        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">02_ANALYTICS</button>
+        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">03_ROUTINES</button>
+        <div class="mt-auto">
+            <button onclick="logout()" class="text-xs text-slate-700 hover:text-white uppercase tracking-widest font-bold">Disconnect_</button>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto p-6 space-y-8">
-        
-        <section class="bg-slate-900/80 rounded-sm p-8 border border-slate-800 shadow-2xl text-center">
-            <h2 class="text-xs font-black mb-8 text-blue-500 tracking-[0.5em]">ANATOMICAL_PERFORMANCE_MAP</h2>
-            <div class="w-full max-w-xs mx-auto">
-                <canvas id="performanceRadar"></canvas>
+    <main class="flex-1 p-8 overflow-y-auto relative">
+        <div class="scanline pointer-events-none"></div>
+
+        <header class="flex justify-between items-end mb-12">
+            <div>
+                <h1 class="text-4xl font-black italic tracking-tighter uppercase">Mission_Control</h1>
+                <p class="text-[10px] text-red-600 tracking-[0.5em] font-bold mt-2">OPERATOR_ID: <span id="userDisplay">...</span></p>
+            </div>
+            <div class="text-right hidden md:block">
+                <div class="text-[10px] text-slate-500 uppercase tracking-widest">System_Status</div>
+                <div class="text-[10px] text-green-500 font-bold uppercase tracking-widest animate-pulse">Uplink_Active</div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="gaming-card p-6 rounded-sm">
+                <p class="text-[9px] text-slate-500 tracking-[0.3em] mb-4">LATEST_LENGTH</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="statLength" class="text-3xl font-black italic text-white">--.-</span>
+                    <span class="text-[10px] text-slate-600">INCHES</span>
+                </div>
+            </div>
+            <div class="gaming-card p-6 rounded-sm">
+                <p class="text-[9px] text-slate-500 tracking-[0.3em] mb-4">AVG_GIRTH</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="statGirth" class="text-3xl font-black italic text-white">--.-</span>
+                    <span class="text-[10px] text-slate-600">INCHES</span>
+                </div>
+            </div>
+            <div class="gaming-card p-6 rounded-sm glow-border">
+                <p class="text-[9px] text-red-600 tracking-[0.3em] mb-4 font-bold">EQ_RATING</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="statEQ" class="text-3xl font-black italic text-red-600">--</span>
+                    <span class="text-[10px] text-red-900">/ 10</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="max-w-xl bg-slate-900/40 p-10 border border-slate-800 rounded-sm">
+            <h3 class="text-xs font-bold tracking-[0.4em] text-white mb-8">INITIALIZE_DATA_ENTRY</h3>
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">LENGTH (BPEL)</label>
+                        <input type="number" id="valLength" step="0.1" class="w-full bg-black border border-slate-800 p-3 text-white outline-none focus:border-red-600">
+                    </div>
+                    <div>
+                        <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">GIRTH (MID)</label>
+                        <input type="number" id="valGirth" step="0.1" class="w-full bg-black border border-slate-800 p-3 text-white outline-none focus:border-red-600">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">EQ SCORE (1-10)</label>
+                    <input type="range" id="valEQ" min="1" max="10" class="w-full accent-red-600">
+                </div>
+                <button onclick="saveLog()" class="w-full bg-red-800 py-4 font-black text-[10px] tracking-[0.4em] hover:bg-white hover:text-black transition">PUSH_TO_VAULT</button>
+                <p id="msg" class="text-[10px] text-center uppercase tracking-widest font-bold min-h-[15px]"></p>
             </div>
         </section>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section class="bg-slate-900/80 rounded-sm p-6 border border-slate-800">
-                <h3 class="text-xs font-black mb-6 text-slate-400 tracking-[0.2em]">INITIALIZE_DATA_INJECTION</h3>
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-[9px] text-slate-500 mb-2 tracking-widest">SPEC_LENGTH (BPEL)</label>
-                        <input type="number" id="len-in" step="0.1" class="w-full bg-[#020617] border border-slate-800 p-3 focus:border-blue-600 outline-none text-white transition">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] text-slate-500 mb-2 tracking-widest">SPEC_GIRTH (MID)</label>
-                        <input type="number" id="gir-in" step="0.1" class="w-full bg-[#020617] border border-slate-800 p-3 focus:border-blue-600 outline-none text-white transition">
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-slate-900/80 rounded-sm p-6 border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-xs font-black mb-6 text-slate-400 tracking-[0.2em]">EQ_&_HARDNESS_SCORE</h3>
-                    <div class="space-y-4">
-                        <label class="block text-[10px] text-blue-500 mb-1 text-center font-bold">HARDNESS_INDEX: 1-10</label>
-                        <input type="range" id="eq-in" min="1" max="10" class="w-full accent-blue-600 bg-slate-800 h-1 appearance-none">
-                    </div>
-                </div>
-                <button onclick="logSession()" class="mt-8 w-full bg-blue-700 hover:bg-white hover:text-black text-white font-black py-4 transition uppercase text-[11px] tracking-[0.3em]">COMMIT_PROTOCOLS</button>
-            </section>
-        </div>
     </main>
 
     <script>
         const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
         const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
+        const apex = supabase.createClient(SB_URL, SB_KEY);
 
-        // --- 1. SECURITY LOCK ---
-        async function checkUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = 'login.html'; 
-            }
-        }
-        checkUser();
+        // INITIALIZE
+        window.onload = async () => {
+            const { data: { user } } = await apex.auth.getUser();
+            if (!user) window.location.href = 'login.html';
+            document.getElementById('userDisplay').innerText = user.email.split('@')[0];
+            fetchLatestStats(user.id);
+        };
 
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        }
-
-        // --- 2. THE RADAR CHART ---
-        const ctx = document.getElementById('performanceRadar').getContext('2d');
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['LENGTH', 'GIRTH', 'HARDNESS', 'STAMINA', 'RECOVERY', 'CONTROL'],
-                datasets: [{
-                    data: [5, 4, 7, 3, 6, 5], 
-                    backgroundColor: 'rgba(29, 78, 216, 0.2)', // Matches blue theme
-                    borderColor: 'rgba(37, 99, 235, 1)',
-                    borderWidth: 1,
-                    pointBackgroundColor: '#2563eb'
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        angleLines: { color: '#1e293b' },
-                        grid: { color: '#1e293b' },
-                        pointLabels: { color: '#64748b', font: { size: 8, weight: 'bold' } },
-                        ticks: { display: false },
-                        suggestedMin: 0,
-                        suggestedMax: 10
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        // --- 3. DATA INJECTION LOGIC ---
-        async function logSession() {
-            const status = document.getElementById('sync-status');
-            status.innerText = "● UPLOADING...";
-            status.className = "text-[10px] text-blue-500 font-mono animate-pulse";
-
+        // SAVE DATA
+        async function saveLog() {
+            const { data: { user } } = await apex.auth.getUser();
             const payload = {
-                length_bpel: document.getElementById('len-in').value,
-                girth_mid: document.getElementById('gir-in').value,
-                eq_score: document.getElementById('eq-in').value
+                user_id: user.id,
+                length_bpel: document.getElementById('valLength').value,
+                girth_mid: document.getElementById('valGirth').value,
+                eq_score: document.getElementById('valEQ').value
             };
 
-            const response = await fetch(`${SB_URL}/rest/v1/performance_logs`, {
-                method: 'POST',
-                headers: {
-                    'apikey': SB_KEY,
-                    'Authorization': `Bearer ${SB_KEY}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(payload)
-            });
+            const { error } = await apex.from('performance_logs').insert([payload]);
 
-            if (response.ok) {
-                status.innerText = "● ENCRYPTED_SUCCESS";
-                status.className = "text-[10px] text-green-500 font-mono";
-                setTimeout(() => { status.innerText = "● STANDBY"; status.className = "text-[10px] text-yellow-500"; }, 3000);
+            if (error) {
+                document.getElementById('msg').innerText = "ERROR: " + error.message;
             } else {
-                status.innerText = "● UPLINK_FAILURE";
-                status.className = "text-[10px] text-red-500 font-mono";
+                document.getElementById('msg').innerText = "VAULT_SYNCHRONIZED_SUCCESSFULLY";
+                fetchLatestStats(user.id);
             }
         }
 
-        // --- 4. BOSS KEY (ESC) ---
+        async function fetchLatestStats(uid) {
+            const { data } = await apex.from('performance_logs')
+                .select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(1);
+            if (data && data[0]) {
+                document.getElementById('statLength').innerText = data[0].length_bpel;
+                document.getElementById('statGirth').innerText = data[0].girth_mid;
+                document.getElementById('statEQ').innerText = data[0].eq_score;
+            }
+        }
+
+        // GHOST MODE KEY (Shift + X)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                window.location.href = 'https://www.google.com/search?q=mitosis+notes';
+            if (e.shiftKey && e.key === 'X') {
+                const ghost = document.getElementById('ghostMode');
+                ghost.classList.toggle('hidden');
             }
         });
+
+        async function logout() {
+            await apex.auth.signOut();
+            window.location.href = 'login.html';
+        }
     </script>
 </body>
 </html>
