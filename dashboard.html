@@ -3,145 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Labs // Mission Control</title>
+    <title>APEX LABS // MISSION CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #020617; color: #f1f5f9; font-family: 'Monaco', monospace; }
-        .glow-border { border: 1px solid rgba(220, 38, 38, 0.3); box-shadow: 0 0 15px rgba(220, 38, 38, 0.1); }
-        .gaming-card { background: rgba(15, 23, 42, 0.8); backdrop-blur: 10px; border: 1px solid #1e293b; transition: all 0.3s; }
-        .gaming-card:hover { border-color: #dc2626; transform: translateY(-2px); }
-        .scanline { width: 100%; height: 2px; background: rgba(220, 38, 38, 0.1); position: absolute; animation: scan 4s linear infinite; }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+        
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+        }
+
+        .sidebar-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover, .sidebar-active {
+            background: linear-gradient(90deg, rgba(255,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
+            border-left: 3px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .glass-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid #222;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-glow {
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 2;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="min-h-screen flex overflow-hidden">
+<body class="flex h-screen">
 
-    <div id="ghostMode" class="fixed inset-0 bg-white z-[999] hidden flex items-center justify-center">
-        <h1 class="text-slate-300 font-sans text-2xl">Project_Documentation_v2.xlsx - Excel</h1>
-    </div>
-
-    <nav class="w-20 md:w-64 border-r border-slate-800 flex flex-col p-6 space-y-8 bg-black/50">
-        <div class="text-red-600 font-black tracking-tighter text-xl mb-10">APEX_LABS</div>
-        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">01_THE_VAULT</button>
-        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">02_ANALYTICS</button>
-        <button class="text-left text-xs tracking-[0.3em] text-slate-500 hover:text-red-500 transition">03_ROUTINES</button>
-        <div class="mt-auto">
-            <button onclick="logout()" class="text-xs text-slate-700 hover:text-white uppercase tracking-widest font-bold">Disconnect_</button>
+    <aside class="w-64 bg-[#050505] border-r border-[#111] flex flex-col z-10">
+        <div class="p-8">
+            <h1 class="text-2xl font-extrabold tracking-tighter text-red-600">APEX_LABS</h1>
+            <p class="text-[9px] text-gray-600 tracking-[0.3em]">VERSION_2.0.4</p>
         </div>
-    </nav>
 
-    <main class="flex-1 p-8 overflow-y-auto relative">
-        <div class="scanline pointer-events-none"></div>
+        <nav class="flex-1 px-4 space-y-2">
+            <div class="sidebar-item sidebar-active p-4 flex items-center gap-4 cursor-pointer">
+                <span class="text-xs uppercase font-bold tracking-widest">01_Dashboard</span>
+            </div>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
+                <span class="text-xs uppercase font-bold tracking-widest">02_The_Vault</span>
+            </div>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
+                <span class="text-xs uppercase font-bold tracking-widest">03_The_Gym</span>
+            </div>
+            <div class="sidebar-item p-4 flex items-center gap-4 cursor-pointer text-gray-500">
+                <span class="text-xs uppercase font-bold tracking-widest">04_Simulation</span>
+            </div>
+        </nav>
 
-        <header class="flex justify-between items-end mb-12">
+        <div class="p-6">
+            <div class="bg-red-950/20 border border-red-900/50 p-4 rounded-lg">
+                <p class="text-[10px] text-red-500 font-bold mb-2">PRO_ANALYST_LOCKED</p>
+                <button class="w-full bg-red-600 text-[10px] font-black py-2 rounded uppercase">Upgrade_Now</button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-10 overflow-y-auto z-10">
+        
+        <header class="flex justify-between items-start mb-10">
             <div>
-                <h1 class="text-4xl font-black italic tracking-tighter uppercase">Mission_Control</h1>
-                <p class="text-[10px] text-red-600 tracking-[0.5em] font-bold mt-2">OPERATOR_ID: <span id="userDisplay">...</span></p>
+                <h2 class="text-xs text-red-600 font-black tracking-[0.5em] uppercase mb-1">Status: Operational</h2>
+                <h3 class="text-4xl font-extrabold uppercase italic tracking-tighter">Welcome, Operator_<span id="userName">...</span></h3>
             </div>
-            <div class="text-right hidden md:block">
-                <div class="text-[10px] text-slate-500 uppercase tracking-widest">System_Status</div>
-                <div class="text-[10px] text-green-500 font-bold uppercase tracking-widest animate-pulse">Uplink_Active</div>
-            </div>
+            <button onclick="logout()" class="text-[10px] border border-gray-800 px-4 py-2 hover:bg-white hover:text-black transition uppercase font-bold">Disconnect</button>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="gaming-card p-6 rounded-sm">
-                <p class="text-[9px] text-slate-500 tracking-[0.3em] mb-4">LATEST_LENGTH</p>
-                <div class="flex items-baseline gap-2">
-                    <span id="statLength" class="text-3xl font-black italic text-white">--.-</span>
-                    <span class="text-[10px] text-slate-600">INCHES</span>
+        <div class="grid grid-cols-12 gap-6">
+            
+            <div class="col-span-4 space-y-6">
+                <div class="glass-card p-6">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center font-black text-2xl italic">A</div>
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Current_Rank</p>
+                            <h4 class="text-lg font-bold uppercase">Apex_Subject</h4>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-[10px] mb-1 uppercase text-gray-400"><span>Build_Progress</span><span>75%</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="gaming-card p-6 rounded-sm">
-                <p class="text-[9px] text-slate-500 tracking-[0.3em] mb-4">AVG_GIRTH</p>
-                <div class="flex items-baseline gap-2">
-                    <span id="statGirth" class="text-3xl font-black italic text-white">--.-</span>
-                    <span class="text-[10px] text-slate-600">INCHES</span>
-                </div>
-            </div>
-            <div class="gaming-card p-6 rounded-sm glow-border">
-                <p class="text-[9px] text-red-600 tracking-[0.3em] mb-4 font-bold">EQ_RATING</p>
-                <div class="flex items-baseline gap-2">
-                    <span id="statEQ" class="text-3xl font-black italic text-red-600">--</span>
-                    <span class="text-[10px] text-red-900">/ 10</span>
-                </div>
-            </div>
-        </div>
 
-        <section class="max-w-xl bg-slate-900/40 p-10 border border-slate-800 rounded-sm">
-            <h3 class="text-xs font-bold tracking-[0.4em] text-white mb-8">INITIALIZE_DATA_ENTRY</h3>
-            <div class="space-y-6">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">LENGTH (BPEL)</label>
-                        <input type="number" id="valLength" step="0.1" class="w-full bg-black border border-slate-800 p-3 text-white outline-none focus:border-red-600">
-                    </div>
-                    <div>
-                        <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">GIRTH (MID)</label>
-                        <input type="number" id="valGirth" step="0.1" class="w-full bg-black border border-slate-800 p-3 text-white outline-none focus:border-red-600">
+                <div class="glass-card p-6">
+                    <h4 class="text-[10px] font-black text-red-600 tracking-widest uppercase mb-6">Build_Sync</h4>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-gray-500 uppercase">Length</p>
+                            <div class="text-right">
+                                <span class="text-xl font-black italic mr-1" id="curLength">--.-</span>
+                                <span class="text-[9px] text-gray-600">/ 8.0</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-gray-500 uppercase">Girth</p>
+                            <div class="text-right">
+                                <span class="text-xl font-black italic mr-1" id="curGirth">--.-</span>
+                                <span class="text-[9px] text-gray-600">/ 5.5</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="text-[9px] text-slate-500 block mb-2 tracking-widest">EQ SCORE (1-10)</label>
-                    <input type="range" id="valEQ" min="1" max="10" class="w-full accent-red-600">
-                </div>
-                <button onclick="saveLog()" class="w-full bg-red-800 py-4 font-black text-[10px] tracking-[0.4em] hover:bg-white hover:text-black transition">PUSH_TO_VAULT</button>
-                <p id="msg" class="text-[10px] text-center uppercase tracking-widest font-bold min-h-[15px]"></p>
             </div>
-        </section>
+
+            <div class="col-span-8 space-y-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="glass-card p-4 text-center">
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">Stamina_Level</p>
+                        <p class="text-2xl font-black text-red-600 stat-glow">-- min</p>
+                    </div>
+                    <div class="glass-card p-4 text-center">
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">Libido_Index</p>
+                        <p class="text-2xl font-black text-white">8/10</p>
+                    </div>
+                    <div class="glass-card p-4 text-center">
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">EQ_Rating</p>
+                        <p class="text-2xl font-black text-white" id="curEQ">--</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8">
+                    <h4 class="text-[10px] font-black text-white tracking-widest uppercase mb-8 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-red-600 animate-ping"></span> Daily_Protocols
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-white/5 border-l-2 border-red-600">
+                            <div>
+                                <p class="text-xs font-bold uppercase">The_Gym // Pelvic_Friction</p>
+                                <p class="text-[10px] text-gray-500">Daily 100x Reps Required</p>
+                            </div>
+                            <button class="text-[9px] font-black uppercase bg-red-600 px-4 py-2 italic">Start_</button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-white/5 border-l-2 border-gray-800">
+                            <div>
+                                <p class="text-xs font-bold uppercase text-gray-400">The_Vault // Metric_Sync</p>
+                                <p class="text-[10px] text-gray-600">Pending Log Entry</p>
+                            </div>
+                            <button class="text-[9px] font-black uppercase border border-gray-800 px-4 py-2 italic">Open_</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script>
+        // Supabase Init
         const SB_URL = 'https://upfmksjiyptnckjauaut.supabase.co'; 
-        const SB_KEY = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+        const SB_KEY = 'YOUR_KEY_HERE'; // Add your key
         const apex = supabase.createClient(SB_URL, SB_KEY);
 
-        // INITIALIZE
         window.onload = async () => {
             const { data: { user } } = await apex.auth.getUser();
             if (!user) window.location.href = 'login.html';
-            document.getElementById('userDisplay').innerText = user.email.split('@')[0];
-            fetchLatestStats(user.id);
+            document.getElementById('userName').innerText = user.email.split('@')[0];
+            loadData(user.id);
         };
 
-        // SAVE DATA
-        async function saveLog() {
-            const { data: { user } } = await apex.auth.getUser();
-            const payload = {
-                user_id: user.id,
-                length_bpel: document.getElementById('valLength').value,
-                girth_mid: document.getElementById('valGirth').value,
-                eq_score: document.getElementById('valEQ').value
-            };
-
-            const { error } = await apex.from('performance_logs').insert([payload]);
-
-            if (error) {
-                document.getElementById('msg').innerText = "ERROR: " + error.message;
-            } else {
-                document.getElementById('msg').innerText = "VAULT_SYNCHRONIZED_SUCCESSFULLY";
-                fetchLatestStats(user.id);
-            }
-        }
-
-        async function fetchLatestStats(uid) {
+        async function loadData(uid) {
             const { data } = await apex.from('performance_logs')
                 .select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(1);
             if (data && data[0]) {
-                document.getElementById('statLength').innerText = data[0].length_bpel;
-                document.getElementById('statGirth').innerText = data[0].girth_mid;
-                document.getElementById('statEQ').innerText = data[0].eq_score;
+                document.getElementById('curLength').innerText = data[0].length_bpel;
+                document.getElementById('curGirth').innerText = data[0].girth_mid;
+                document.getElementById('curEQ').innerText = data[0].eq_score;
             }
         }
-
-        // GHOST MODE KEY (Shift + X)
-        document.addEventListener('keydown', (e) => {
-            if (e.shiftKey && e.key === 'X') {
-                const ghost = document.getElementById('ghostMode');
-                ghost.classList.toggle('hidden');
-            }
-        });
 
         async function logout() {
             await apex.auth.signOut();
