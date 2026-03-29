@@ -183,21 +183,20 @@ async function finalizeCalibration() {
 
         // Ensure all values are numbers (integers or floats) to match database
         const payload = {
-            id: user.id,
-            age: parseInt(document.getElementById('q-age').value) || 0,
-            height: parseInt(document.getElementById('q-height').value) || 0,
-            weight: parseInt(document.getElementById('q-weight').value) || 0,
-            body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: parseInt(selectedFreq),
-            current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
-            current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
-            target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
-            target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
-            sleep_quality: parseInt(document.getElementById('q-sleep').value) || 0,
-            activity_level: parseInt(document.getElementById('q-activity').value) || 1,
-            updated_at: new Date().toISOString()
-        };
-
+    id: user.id,
+    age: parseInt(document.getElementById('q-age').value) || 0,
+    height: parseInt(document.getElementById('q-height').value) || 0,
+    weight: parseInt(document.getElementById('q-weight').value) || 0,
+    body_fat: parseInt(document.getElementById('q-fat').value) || 0,
+    sexual_frequency: parseInt(selectedFreq), // This now matches the SQL column
+    current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
+    current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
+    target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
+    target_girth: parseFloat(document.getElementById('q-t-girth').value) || 0,
+    sleep_quality: parseInt(document.getElementById('q-sleep').value) || 7,
+    activity_level: parseInt(document.getElementById('q-activity').value) || 1,
+    updated_at: new Date().toISOString()
+};
         const { error } = await supabase.from('profiles').upsert(payload);
         if (error) throw error;
 
