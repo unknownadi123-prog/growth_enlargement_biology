@@ -104,6 +104,7 @@
                     </select>
                 </div>
                 <button onclick="finalizeCalibration()" class="w-full bg-apex-red text-white font-black py-4 mt-8 italic transition">INITIALIZE_SYSTEM</button>
+                
             </div>
         </div>
     </div>
@@ -136,76 +137,58 @@
         </div>
     </main>
 
-    <script>
-     <script>
-<script>
-// 1. GLOBAL VARIABLE - Must be named 'supabase' to match your function calls
-let supabase; 
+   <script>
+// 1. DECLARE GLOBAL VARIABLE
+var supabase; 
 
-function initSupabase() {
-    // Replace these with your actual credentials from the Supabase Dashboard
-    const supabaseUrl = 'https://upfmksjiyptnckjauaut.supabase.co';
-    const supabaseKey = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
-
-    try {
-        if (window.supabase) {
-            // Assigning to the global variable
-            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-            console.log("APEX_SYSTEM: ONLINE");
-        } else {
-            console.error("APEX_SYSTEM: LIBRARY_MISSING (Check CDN link)");
-        }
-    } catch (err) {
-        console.error("INIT_ERROR:", err);
+// 2. INITIALIZE IMMEDIATELY
+(function init() {
+    const url = 'https://upfmksjiyptnckjauaut.supabase.co';
+    const key = 'sb_publishable_7KuZJLPkSkUhnDUVBPMJIw_SZXTEsoe';
+    
+    if (window.supabase) {
+        supabase = window.supabase.createClient(url, key);
+        console.log("APEX_STATUS: LINK_ESTABLISHED");
+    } else {
+        console.error("APEX_STATUS: CDN_FAILURE - Library not loaded");
     }
-}
+})();
 
-// Initialize immediately so the 'supabase' object exists for all other functions
-initSupabase();
-
+// 3. SELECTION LOGIC
 let selectedFreq = 3;
-
 function setFreq(val) {
     selectedFreq = val;
     document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('border-apex-red', 'bg-red-950/20'));
-    const btn = document.getElementById(`f${val}`);
-    if(btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
+    const btn = document.getElementById('f' + val);
+    if (btn) btn.classList.add('border-apex-red', 'bg-red-950/20');
 }
 
+// 4. NAVIGATION
 function nextWizStep(curr, next) {
-    const currentElem = document.getElementById(`step-${curr}`);
-    const nextElem = document.getElementById(`step-${next}`);
-    if (currentElem && nextElem) {
-        currentElem.classList.add('hidden');
-        nextElem.classList.remove('hidden');
-        document.getElementById('wiz-progress').style.width = (next * 25) + '%';
-    }
+    document.getElementById('step-' + curr).classList.add('hidden');
+    document.getElementById('step-' + next).classList.remove('hidden');
+    document.getElementById('wiz-progress').style.width = (next * 25) + '%';
 }
 
+// 5. THE CORE UPLINK (FIXED LINE 196)
 async function finalizeCalibration() {
-    // Critical check: Stop if supabase didn't load
-    if (!supabase) {
-        alert("CRITICAL_ERROR: Supabase connection failed. Check your internet or CDN.");
-        return;
-    }
+    if (!supabase) return alert("SYSTEM_OFFLINE: Refresh the page.");
 
     try {
-        // Correcting the structure to match Supabase v2
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         
         if (authError || !user) {
-            alert("AUTH_REQUIRED: You must be logged in to save your profile.");
+            alert("ACCESS_DENIED: Please log in first.");
             return;
         }
 
-        // Data cleanup: ensure numbers are numbers, not strings
         const payload = {
             id: user.id,
             age: parseInt(document.getElementById('q-age').value) || 0,
             height: parseInt(document.getElementById('q-height').value) || 0,
             weight: parseInt(document.getElementById('q-weight').value) || 0,
             body_fat: parseInt(document.getElementById('q-fat').value) || 0,
-            sexual_frequency: parseInt(selectedFreq),
+            sexual_frequency: selectedFreq,
             current_bpel: parseFloat(document.getElementById('q-bpel').value) || 0,
             current_girth: parseFloat(document.getElementById('q-girth').value) || 0,
             target_bpel: parseFloat(document.getElementById('q-t-bpel').value) || 0,
@@ -216,32 +199,25 @@ async function finalizeCalibration() {
         };
 
         const { error } = await supabase.from('profiles').upsert(payload);
-        
-        if (error) {
-            console.error("UPSERT_ERROR:", error.message);
-            alert("UPLINK_FAILED: " + error.message);
-            return;
-        }
+        if (error) throw error;
 
-        // Success: Hide overlay and update dashboard
         document.getElementById('calibration-overlay').classList.add('hidden');
         updateDashUI(payload);
 
     } catch (err) {
-        console.error("UNEXPECTED_CRASH:", err);
+        console.error("UPLINK_ERROR:", err.message);
+        alert("SYNC_FAILED: " + err.message);
     }
 }
 
 function updateDashUI(data) {
-    const len = document.getElementById('dash-length');
-    const gir = document.getElementById('dash-girth');
-    if(len) len.innerText = `${(data.current_bpel || 0).toFixed(2)} IN`;
-    if(gir) gir.innerText = `${(data.current_girth || 0).toFixed(2)} IN`;
+    document.getElementById('dash-length').innerText = (data.current_bpel || 0).toFixed(2) + " IN";
+    document.getElementById('dash-girth').innerText = (data.current_girth || 0).toFixed(2) + " IN";
 }
 
-// 4. Auto-load profile if user is already logged in
+// 6. AUTO-LOAD (FIXED LINE 216)
 window.onload = async () => {
-    // Wait slightly to ensure CDN library and initSupabase are finished
+    // Small delay to ensure init finished
     setTimeout(async () => {
         if (supabase) {
             const { data: { user } } = await supabase.auth.getUser();
@@ -253,9 +229,8 @@ window.onload = async () => {
                 }
             }
         }
-    }, 200);
+    }, 300);
 };
-</script>
 </script>
 </body>
 </html>
