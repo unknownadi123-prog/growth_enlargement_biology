@@ -106,21 +106,38 @@
                 </div>
             </div>
 
-            <div id="step-2" class="calibration-step hidden">
-                <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_02 // LIFESTYLE_BIO</span>
-                <h2 class="text-3xl font-black text-white italic mt-2 mb-8">NEURAL_STRESS_FACTORS</h2>
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-[10px] text-slate-500 mb-2 uppercase">AVG_SLEEP_HOURS</p>
-                        <input type="range" id="sleep-range" min="4" max="10" value="7" class="w-full accent-apex-red">
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-500 mb-2 uppercase">CAFFEINE_INTAKE (CUPS)</p>
-                        <input type="range" id="caffeine-range" min="0" max="5" value="1" class="w-full accent-apex-red">
-                    </div>
-                    <button onclick="saveAndNext(2)" class="w-full bg-apex-red text-white font-black py-4 mt-4 italic hover:bg-white hover:text-black transition">CONTINUE_UPLINK</button>
-                </div>
+          <div id="step-2" class="calibration-step hidden">
+    <span class="text-apex-red font-black tracking-[0.4em] text-[10px]">PHASE_02 // LIFESTYLE_BIO</span>
+    <h2 class="text-3xl font-black text-white italic mt-2 mb-8">NEURAL_STRESS_FACTORS</h2>
+    
+    <div class="space-y-10">
+        <div class="glass-card p-6 border-l-2 border-slate-700">
+            <div class="flex justify-between mb-4">
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">AVG_SLEEP_HOURS</p>
+                <span id="sleep-display" class="text-apex-red font-black">7H</span>
             </div>
+            <input type="range" id="sleep-range" min="4" max="10" value="7" 
+                   oninput="document.getElementById('sleep-display').innerText = this.value + 'H'"
+                   class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-apex-red">
+            <p class="text-[9px] text-slate-600 mt-2 italic text-right">DIRECTLY IMPACTS REFRACTORY WINDOW</p>
+        </div>
+
+        <div class="glass-card p-6 border-l-2 border-slate-700">
+            <div class="flex justify-between mb-4">
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">STIMULANT_INTAKE</p>
+                <span id="caffeine-display" class="text-apex-red font-black">1 UNIT</span>
+            </div>
+            <input type="range" id="caffeine-range" min="0" max="5" value="1" 
+                   oninput="document.getElementById('caffeine-display').innerText = this.value + ' UNIT'"
+                   class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-apex-red">
+            <p class="text-[9px] text-slate-600 mt-2 italic text-right">ADJUSTS NEURAL STRESS SENSITIVITY</p>
+        </div>
+
+        <button onclick="saveAndNext(2)" class="w-full bg-apex-red text-white font-black py-5 mt-4 italic hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(153,27,27,0.2)]">
+            CONTINUE_UPLINK
+        </button>
+    </div>
+</div>
 
             <div id="step-3" class="calibration-step hidden text-center">
                 <div class="w-20 h-20 border-4 border-apex-red border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
